@@ -1,0 +1,371 @@
+import { useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, GitBranch, Link, Send, MapPin } from 'lucide-react';
+import WormholePortal from '../three/WormholePortal';
+
+const SOCIALS = [
+  { icon: Mail,     label: 'Email',    href: 'mailto:hiranantony@karunya.edu.in', value: 'hiranantony@karunya.edu.in' },
+  { icon: Phone,    label: 'Phone',    href: 'tel:+919360276068',                 value: '+91 9360276068' },
+  { icon: GitBranch, label: 'GitHub',   href: 'https://github.com/Hiran-Antony',   value: 'github.com/Hiran-Antony' },
+  { icon: Link, label: 'LinkedIn', href: 'https://linkedin.com/in/hiranantony15', value: 'linkedin.com/in/hiranantony15' },
+  { icon: MapPin,   label: 'Location', href: null,                                value: 'Coimbatore, India' },
+];
+
+export default function Contact() {
+  const [form, setForm]         = useState({ name: '', email: '', message: '' });
+  const [sending, setSending]   = useState(false);
+  const [sent, setSent]         = useState(false);
+  const [burst, setBurst]       = useState(false);
+  const btnRef = useRef(null);
+
+  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSending(true);
+    setBurst(true);
+    // Simulate send
+    await new Promise(r => setTimeout(r, 1400));
+    setSending(false);
+    setSent(true);
+    setTimeout(() => { setBurst(false); setSent(false); setForm({ name:'', email:'', message:'' }); }, 4000);
+  };
+
+  return (
+    <section
+      id="contact"
+      className="section-wrap"
+      style={{
+        background: 'linear-gradient(180deg, #0A0704 0%, #1a0f08 60%, #0A0704 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: '100vh',
+      }}
+    >
+      {/* Wormhole portal background */}
+      <WormholePortal />
+
+      {/* Dark overlay so text is readable */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: 'radial-gradient(ellipse at center, transparent 30%, rgba(10,7,4,0.75) 80%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+        <div className="reveal" style={{ marginBottom: '4rem', textAlign: 'center' }}>
+          <p className="section-label" style={{ color: 'var(--gold)' }}>07 &mdash; Contact</p>
+          <h2 className="section-title light">
+            Let's <span className="text-gradient">Connect</span>
+          </h2>
+          <p style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '1rem',
+            color: 'rgba(232,213,176,0.6)',
+            marginTop: '0.75rem',
+            maxWidth: '480px',
+            margin: '0.75rem auto 0',
+            lineHeight: 1.7,
+          }}>
+            Open to internships, freelance projects, and collaboration.
+            Drop a message — I respond fast.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.2fr)',
+          gap: '3rem',
+          alignItems: 'start',
+        }}
+          className="contact-grid"
+        >
+          {/* LEFT — Social links */}
+          <div className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h3 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.3rem',
+              fontWeight: 700,
+              color: 'var(--cream)',
+              marginBottom: '0.5rem',
+            }}>
+              Find me at
+            </h3>
+            {SOCIALS.map(({ icon: Icon, label, href, value }) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+                whileHover={{ x: 6 }}
+              >
+                <a
+                  href={href || undefined}
+                  target={href?.startsWith('http') ? '_blank' : undefined}
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    padding: '1rem 1.25rem',
+                    background: 'rgba(61,43,31,0.5)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(201,169,110,0.18)',
+                    borderRadius: 'var(--radius-lg)',
+                    textDecoration: 'none',
+                    transition: 'border-color 0.25s, box-shadow 0.25s',
+                  }}
+                  className="social-link"
+                >
+                  <div style={{
+                    width: 40, height: 40,
+                    background: 'rgba(201,169,110,0.12)',
+                    border: '1px solid rgba(201,169,110,0.25)',
+                    borderRadius: 'var(--radius-md)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <Icon size={18} color="var(--gold)" />
+                  </div>
+                  <div>
+                    <p style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.68rem',
+                      color: 'rgba(201,169,110,0.55)',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      marginBottom: '0.1rem',
+                    }}>{label}</p>
+                    <p style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.85rem',
+                      color: 'var(--cream)',
+                      wordBreak: 'break-all',
+                    }}>{value}</p>
+                  </div>
+                </a>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* RIGHT — Contact form */}
+          <motion.div
+            className="reveal"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.16,1,0.3,1] }}
+          >
+            <form
+              onSubmit={handleSubmit}
+              style={{
+                background: 'rgba(61,43,31,0.45)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(201,169,110,0.2)',
+                borderRadius: 'var(--radius-xl)',
+                padding: '2.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.2rem',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Burst particles overlay */}
+              {burst && <BurstEffect />}
+
+              {['name', 'email'].map(field => (
+                <div key={field} style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <label style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.7rem',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(201,169,110,0.65)',
+                  }}>
+                    {field === 'name' ? 'Your Name' : 'Email Address'}
+                  </label>
+                  <input
+                    type={field === 'email' ? 'email' : 'text'}
+                    name={field}
+                    value={form[field]}
+                    onChange={handleChange}
+                    required
+                    placeholder={field === 'name' ? 'John Doe' : 'john@example.com'}
+                    className="contact-input"
+                    style={{
+                      background: 'rgba(250,247,242,0.04)',
+                      border: '1px solid rgba(201,169,110,0.2)',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '0.8rem 1rem',
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.9rem',
+                      color: 'var(--cream)',
+                      outline: 'none',
+                      transition: 'border-color 0.25s, box-shadow 0.25s',
+                      width: '100%',
+                    }}
+                  />
+                </div>
+              ))}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(201,169,110,0.65)',
+                }}>
+                  Message
+                </label>
+                <textarea
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
+                  required
+                  placeholder="Hey Hiran, I'd love to discuss..."
+                  rows={5}
+                  className="contact-input"
+                  style={{
+                    background: 'rgba(250,247,242,0.04)',
+                    border: '1px solid rgba(201,169,110,0.2)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '0.8rem 1rem',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.9rem',
+                    color: 'var(--cream)',
+                    outline: 'none',
+                    resize: 'vertical',
+                    transition: 'border-color 0.25s, box-shadow 0.25s',
+                    width: '100%',
+                  }}
+                />
+              </div>
+
+              <button
+                ref={btnRef}
+                type="submit"
+                disabled={sending || sent}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.6rem',
+                  padding: '0.9rem 2rem',
+                  background: sent
+                    ? 'linear-gradient(135deg,#4CAF50,#2E7D32)'
+                    : 'linear-gradient(135deg, var(--gold), var(--ember))',
+                  color: sent ? '#fff' : 'var(--espresso)',
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  border: 'none',
+                  borderRadius: 'var(--radius-full)',
+                  cursor: sending || sent ? 'default' : 'none',
+                  transition: 'transform 0.25s var(--ease-spring), box-shadow 0.25s, background 0.4s',
+                  boxShadow: '0 0 24px rgba(201,169,110,0.35)',
+                }}
+                onMouseEnter={e => { if (!sending && !sent) e.currentTarget.style.transform = 'scale(1.04)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+              >
+                {sent ? '✓ Message Sent!' : sending ? 'Sending...' : <><Send size={16} /> Send Message</>}
+              </button>
+            </form>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        position: 'relative',
+        zIndex: 2,
+        textAlign: 'center',
+        marginTop: '5rem',
+        paddingTop: '2rem',
+        borderTop: '1px solid rgba(201,169,110,0.1)',
+      }}>
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.75rem',
+          color: 'rgba(201,169,110,0.4)',
+          letterSpacing: '0.08em',
+        }}>
+          © 2025 Hiran Antony R — Built with React, Three.js & GSAP
+        </p>
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.68rem',
+          color: 'rgba(201,169,110,0.25)',
+          marginTop: '0.4rem',
+        }}>
+          Designed & developed from scratch — no templates
+        </p>
+      </div>
+
+      <style>{`
+        .contact-grid { }
+        @media (max-width: 768px) {
+          .contact-grid { grid-template-columns: 1fr !important; }
+        }
+        .contact-input:focus {
+          border-color: var(--gold) !important;
+          box-shadow: 0 0 0 3px rgba(201,169,110,0.15), 0 0 20px rgba(201,169,110,0.2) !important;
+        }
+        .contact-input::placeholder { color: rgba(232,213,176,0.25); }
+        .social-link:hover {
+          border-color: rgba(201,169,110,0.4) !important;
+          box-shadow: 0 0 20px rgba(201,169,110,0.12) !important;
+        }
+      `}</style>
+    </section>
+  );
+}
+
+function BurstEffect() {
+  const particles = Array.from({ length: 20 }, (_, i) => {
+    const angle  = (i / 20) * 360;
+    const dist   = 60 + Math.random() * 60;
+    const x      = Math.cos((angle * Math.PI) / 180) * dist;
+    const y      = Math.sin((angle * Math.PI) / 180) * dist;
+    const colors = ['#C9A96E','#E85D26','#E8D5B0','#A07C45'];
+    return { id: i, x, y, color: colors[i % colors.length] };
+  });
+
+  return (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      pointerEvents: 'none',
+      zIndex: 20,
+      overflow: 'hidden',
+    }}>
+      {particles.map(p => (
+        <div
+          key={p.id}
+          style={{
+            position: 'absolute',
+            width: '8px', height: '8px',
+            borderRadius: '50%',
+            background: p.color,
+            animation: `burst 0.9s ease-out forwards`,
+            '--tx': `${p.x}px`,
+            '--ty': `${p.y}px`,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes burst {
+          0%   { transform: translate(0,0) scale(1); opacity:1; }
+          100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity:0; }
+        }
+      `}</style>
+    </div>
+  );
+}

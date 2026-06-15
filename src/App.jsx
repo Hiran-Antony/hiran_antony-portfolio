@@ -1,0 +1,154 @@
+import { useState, useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
+
+import Loader          from './components/Loader';
+import Navbar          from './components/Navbar';
+import Hero            from './components/Hero';
+import About           from './components/About';
+import Education       from './components/Education';
+import Skills          from './components/Skills';
+import Projects        from './components/Projects';
+import Experience      from './components/Experience';
+import Certifications  from './components/Certifications';
+import Contact         from './components/Contact';
+
+import useCursor           from './hooks/useCursor';
+import useScrollAnimation  from './hooks/useScrollAnimation';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// ── Konami code ──────────────────────────────────────────────
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+
+function useKonami(cb) {
+  const seq = useRef([]);
+  useEffect(() => {
+    const handler = (e) => {
+      seq.current = [...seq.current, e.key].slice(-KONAMI.length);
+      if (seq.current.join(',') === KONAMI.join(',')) cb();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [cb]);
+}
+
+function ConfettiBurst() {
+  const colors = ['#C9A96E','#E85D26','#E8D5B0','#3D2B1F','#A07C45','#FAF7F2'];
+  const pieces = Array.from({ length: 80 }, (_, i) => ({
+    id: i,
+    color: colors[i % colors.length],
+    left: `${Math.random() * 100}%`,
+    width:  `${6 + Math.random() * 8}px`,
+    height: `${10 + Math.random() * 14}px`,
+    delay: `${Math.random() * 0.6}s`,
+    duration: `${1.2 + Math.random() * 1.5}s`,
+    rotate: `${Math.random() * 720}deg`,
+  }));
+  return (
+    <div style={{ position:'fixed', inset:0, zIndex:999999, pointerEvents:'none', overflow:'hidden' }}>
+      {pieces.map(p => (
+        <div key={p.id} style={{
+          position:'absolute', top:'-20px', left:p.left,
+          width:p.width, height:p.height,
+          background:p.color, borderRadius:'2px',
+          animation:`confettiFall ${p.duration} ease-in forwards`,
+          animationDelay:p.delay,
+          transform:`rotate(${p.rotate})`,
+        }} />
+      ))}
+      <style>{`
+        @keyframes confettiFall {
+          0%   { transform: translateY(0) rotate(0deg);    opacity:1; }
+          100% { transform: translateY(110vh) rotate(720deg); opacity:0; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+export default function App() {
+  const [loaded,   setLoaded]   = useState(false);
+  const [confetti, setConfetti] = useState(false);
+  const progressRef = useRef(null);
+  const lenisRef    = useRef(null);
+
+  // Custom cursor
+  useCursor();
+
+  // Scroll animations (runs after load)
+  useScrollAnimation();
+
+  // Konami easter egg
+  useKonami(() => {
+    setConfetti(true);
+    setTimeout(() => setConfetti(false), 2500);
+  });
+
+  // Lenis smooth scroll
+  useEffect(() => {
+    if (!loaded) return;
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+    lenisRef.current = lenis;
+
+    // Connect Lenis to GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(time => lenis.raf(time * 1000));
+    };
+  }, [loaded]);
+
+  // Scroll progress bar
+  useEffect(() => {
+    const el = document.getElementById('scroll-progress');
+    if (!el) return;
+    const onScroll = () => {
+      const scrollTop  = window.scrollY;
+      const docHeight  = document.documentElement.scrollHeight - window.innerHeight;
+      el.style.width   = `${(scrollTop / docHeight) * 100}%`;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [loaded]);
+
+  return (
+    <>
+      {/* Custom cursor elements */}
+      <div className="cursor-dot"  />
+      <div className="cursor-ring" />
+
+      {/* Scroll progress bar */}
+      <div id="scroll-progress" />
+
+      {/* Boot loader */}
+      {!loaded && <Loader onDone={() => setLoaded(true)} />}
+
+      {/* Konami confetti */}
+      {confetti && <ConfettiBurst />}
+
+      {/* Main site — hidden until loaded to prevent FOUC */}
+      <div style={{ visibility: loaded ? 'visible' : 'hidden' }}>
+        <Navbar />
+        <main>
+          <Hero />
+          <About />
+          <Education />
+          <Skills />
+          <Projects />
+          <Experience />
+          <Certifications />
+          <Contact />
+        </main>
+      </div>
+    </>
+  );
+}
