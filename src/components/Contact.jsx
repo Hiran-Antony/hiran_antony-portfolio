@@ -1,18 +1,17 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, GitBranch, Link, Send, MapPin } from 'lucide-react';
+import { Mail, Phone, GitBranch, Send, MapPin } from 'lucide-react';
 import WormholePortal from '../three/WormholePortal';
 
 const SOCIALS = [
   { icon: Mail,     label: 'Email',    href: 'mailto:hiranantony@karunya.edu.in', value: 'hiranantony@karunya.edu.in' },
   { icon: Phone,    label: 'Phone',    href: 'tel:+919360276068',                 value: '+91 9360276068' },
   { icon: GitBranch, label: 'GitHub',   href: 'https://github.com/Hiran-Antony',   value: 'github.com/Hiran-Antony' },
-  { icon: Link, label: 'LinkedIn', href: 'https://linkedin.com/in/hiranantony15', value: 'linkedin.com/in/hiranantony15' },
   { icon: MapPin,   label: 'Location', href: null,                                value: 'Coimbatore, India' },
 ];
 
 export default function Contact() {
-  const [form, setForm]         = useState({ name: '', email: '', message: '' });
+  const [form, setForm]         = useState({ name: '', phone: '', email: '', message: '' });
   const [sending, setSending]   = useState(false);
   const [sent, setSent]         = useState(false);
   const [burst, setBurst]       = useState(false);
@@ -24,11 +23,29 @@ export default function Contact() {
     e.preventDefault();
     setSending(true);
     setBurst(true);
-    // Simulate send
-    await new Promise(r => setTimeout(r, 1400));
-    setSending(false);
-    setSent(true);
-    setTimeout(() => { setBurst(false); setSent(false); setForm({ name:'', email:'', message:'' }); }, 4000);
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyc5xwnTpSyLnu4dFfDRR2-bS9ARASK6jcOnBNByWtujdsbqjmFg7biFohzekWJpsz4vw/exec';
+    const formData = new FormData();
+    formData.append('Name', form.name);
+    formData.append('Phone No', form.phone);
+    formData.append('Email', form.email);
+    formData.append('Message', form.message);
+
+    try {
+      await fetch(scriptURL, { method: 'POST', body: formData });
+      setSending(false);
+      setSent(true);
+      setTimeout(() => { 
+        setBurst(false); 
+        setSent(false); 
+        setForm({ name:'', phone:'', email:'', message:'' }); 
+      }, 4000);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSending(false);
+      setBurst(false);
+      alert('Oops! Something went wrong while sending the message.');
+    }
   };
 
   return (
@@ -61,13 +78,14 @@ export default function Contact() {
           <p style={{
             fontFamily: 'var(--font-body)',
             fontSize: '1rem',
+            fontWeight: 'bold',
             color: 'rgba(232,213,176,0.6)',
             marginTop: '0.75rem',
             maxWidth: '480px',
             margin: '0.75rem auto 0',
             lineHeight: 1.7,
           }}>
-            Open to internships, freelance projects, and collaboration.
+            Open to internships, freelance projects, and collaboration.<br />
             Drop a message — I respond fast.
           </p>
         </div>
@@ -149,6 +167,65 @@ export default function Contact() {
                 </a>
               </motion.div>
             ))}
+
+            {/* Social Media Buttons */}
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+              <motion.a
+                href="https://linkedin.com/in/hiranantony15"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05, borderColor: 'rgba(201,169,110,0.4)' }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '64px',
+                  height: '64px',
+                  background: 'rgba(20,20,20,0.6)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(201,169,110,0.18)',
+                  borderRadius: '16px',
+                  color: '#0A66C2',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  transition: 'border-color 0.25s',
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                  <rect x="2" y="9" width="4" height="12"></rect>
+                  <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+              </motion.a>
+              
+              <motion.a
+                href="https://instagram.com/hiran_antony15"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05, borderColor: 'rgba(201,169,110,0.4)' }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '64px',
+                  height: '64px',
+                  background: 'rgba(20,20,20,0.6)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(201,169,110,0.18)',
+                  borderRadius: '16px',
+                  color: '#E1306C',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  transition: 'border-color 0.25s',
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              </motion.a>
+            </div>
           </div>
 
           {/* RIGHT — Contact form */}
@@ -177,7 +254,7 @@ export default function Contact() {
               {/* Burst particles overlay */}
               {burst && <BurstEffect />}
 
-              {['name', 'email'].map(field => (
+              {['name', 'phone', 'email'].map(field => (
                 <div key={field} style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   <label style={{
                     fontFamily: 'var(--font-mono)',
@@ -186,15 +263,15 @@ export default function Contact() {
                     textTransform: 'uppercase',
                     color: 'rgba(201,169,110,0.65)',
                   }}>
-                    {field === 'name' ? 'Your Name' : 'Email Address'}
+                    {field === 'name' ? 'Your Name' : field === 'phone' ? 'Phone Number' : 'Email Address'}
                   </label>
                   <input
-                    type={field === 'email' ? 'email' : 'text'}
+                    type={field === 'email' ? 'email' : field === 'phone' ? 'tel' : 'text'}
                     name={field}
                     value={form[field]}
                     onChange={handleChange}
                     required
-                    placeholder={field === 'name' ? 'John Doe' : 'john@example.com'}
+                    placeholder={field === 'name' ? 'John Doe' : field === 'phone' ? '+91 9360276068' : 'john@example.com'}
                     className="contact-input"
                     style={{
                       background: 'rgba(250,247,242,0.04)',
@@ -295,6 +372,7 @@ export default function Contact() {
           letterSpacing: '0.08em',
         }}>
           © 2025 Hiran Antony R — Built with React, Three.js & GSAP
+
         </p>
         <p style={{
           fontFamily: 'var(--font-mono)',

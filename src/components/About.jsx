@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Users, Award, Cpu, Shield } from 'lucide-react';
+import { Users, Award, Cpu, Shield, Phone, Mail, GraduationCap, MapPin } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -141,11 +141,11 @@ export default function About() {
             {/* Contact quick-info */}
             <div className="glass" style={{ padding: '1.25rem 1.5rem' }}>
               {[
-                ['📱', '+91 9360276068'],
-                ['📧', 'hiranantony@karunya.edu.in'],
-                ['🎓', 'Karunya Institute of Technology'],
-                ['📍', 'Coimbatore, India'],
-              ].map(([icon, text]) => (
+                [Phone, '+91 9360276068'],
+                [Mail, 'hiranantony@karunya.edu.in'],
+                [GraduationCap, 'Karunya Institute of Technology & Sciences'],
+                [MapPin, 'Coimbatore, India'],
+              ].map(([Icon, text]) => (
                 <div key={text} style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -156,7 +156,9 @@ export default function About() {
                   fontSize: '0.88rem',
                   color: 'var(--espresso-mid)',
                 }}>
-                  <span>{icon}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '26px', height: '26px', background: 'rgba(201,169,110,0.1)', borderRadius: '6px' }}>
+                    <Icon size={14} color="var(--gold)" />
+                  </div>
                   <span>{text}</span>
                 </div>
               ))}

@@ -6,17 +6,18 @@ gsap.registerPlugin(ScrollTrigger);
 
 const NAV_LINKS = [
   { label: 'About',    href: '#about' },
+  { label: 'Education',href: '#education' },
   { label: 'Skills',   href: '#skills' },
   { label: 'Projects', href: '#projects' },
-  { label: 'Education',href: '#education' },
   { label: 'Contact',  href: '#contact' },
 ];
 
-export default function Navbar() {
+export default function Navbar(props) {
   const navRef  = useRef(null);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('');
   const underlineRef = useRef(null);
+
 
   useEffect(() => {
     // Scroll-based transparency
@@ -47,6 +48,8 @@ export default function Navbar() {
       setOpen(false);
     }
   };
+
+  if (props.hidden) return null;
 
   return (
     <>
@@ -168,7 +171,7 @@ export default function Navbar() {
           font-family: var(--font-body);
           font-size: 0.88rem;
           font-weight: 600;
-          color: var(--gold-light);
+          color: #FAF7F2;
           background: var(--espresso);
           border-radius: var(--radius-full);
           padding: 0.5rem 1.4rem;

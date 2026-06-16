@@ -3,7 +3,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
-import Loader          from './components/Loader';
+import CinematicIntro from './components/CinematicIntro';
+import introVideo from './assets/videos/intro.mp4';
 import Navbar          from './components/Navbar';
 import Hero            from './components/Hero';
 import About           from './components/About';
@@ -69,10 +70,20 @@ function ConfettiBurst() {
 }
 
 export default function App() {
-  const [loaded,   setLoaded]   = useState(false);
+  const hasVisited = sessionStorage.getItem("visited");
+  const [introComplete, setIntroComplete] = useState(!!hasVisited);
   const [confetti, setConfetti] = useState(false);
   const progressRef = useRef(null);
   const lenisRef    = useRef(null);
+
+  // Preload intro video
+  useEffect(() => {
+    if (hasVisited) return;
+    const video = document.createElement("video");
+    video.src = introVideo;
+    video.preload = "auto";
+    video.load();
+  }, [hasVisited]);
 
   // Custom cursor
   useCursor();
@@ -88,7 +99,7 @@ export default function App() {
 
   // Lenis smooth scroll
   useEffect(() => {
-    if (!loaded) return;
+    if (!introComplete) return;
 
     const lenis = new Lenis({
       duration: 1.2,
@@ -105,7 +116,7 @@ export default function App() {
       lenis.destroy();
       gsap.ticker.remove(time => lenis.raf(time * 1000));
     };
-  }, [loaded]);
+  }, [introComplete]);
 
   // Scroll progress bar
   useEffect(() => {
@@ -118,7 +129,7 @@ export default function App() {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [loaded]);
+  }, [introComplete]);
 
   return (
     <>
@@ -129,17 +140,26 @@ export default function App() {
       {/* Scroll progress bar */}
       <div id="scroll-progress" />
 
-      {/* Boot loader */}
-      {!loaded && <Loader onDone={() => setLoaded(true)} />}
+      {/* Cinematic intro plays first */}
+      {!hasVisited && (
+        <CinematicIntro onComplete={() => {
+          sessionStorage.setItem("visited", "true");
+          setIntroComplete(true);
+        }} />
+      )}
 
       {/* Konami confetti */}
       {confetti && <ConfettiBurst />}
 
-      {/* Main site — hidden until loaded to prevent FOUC */}
-      <div style={{ visibility: loaded ? 'visible' : 'hidden' }}>
-        <Navbar />
+      {/* Portfolio always rendered underneath, instantly ready when intro finishes */}
+      <div style={{ 
+        opacity: introComplete ? 1 : 0,
+        transition: "opacity 0.3s ease",
+        visibility: introComplete ? 'visible' : 'hidden'
+      }}>
+        <Navbar hidden={!introComplete} />
         <main>
-          <Hero />
+          <Hero introComplete={introComplete} />
           <About />
           <Education />
           <Skills />
@@ -148,6 +168,44 @@ export default function App() {
           <Certifications />
           <Contact />
         </main>
+
+        {/* Floating Resume Button */}
+        <a
+          href="/resume.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            position: "fixed",
+            bottom: "32px",
+            right: "32px",
+            background: "#3D2B1F",
+            color: "#FAF7F2",
+            border: "0.5px solid #C9A96E",
+            padding: "10px 22px",
+            borderRadius: "40px",
+            fontSize: "13px",
+            fontWeight: "500",
+            textDecoration: "none",
+            zIndex: 999,
+            boxShadow: "0 4px 20px rgba(61,43,31,0.25)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontFamily: "Space Grotesk, sans-serif",
+            letterSpacing: "0.05em",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = "#C9A96E";
+            e.currentTarget.style.color = "#3D2B1F";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = "#3D2B1F";
+            e.currentTarget.style.color = "#C9A96E";
+          }}
+        >
+          ↓ Resume
+        </a>
       </div>
     </>
   );

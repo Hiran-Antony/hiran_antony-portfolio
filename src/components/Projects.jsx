@@ -32,8 +32,8 @@ const PROJECTS = [
     id: 'fashionverse',
     title: 'FashionVerse',
     subtitle: 'Full-Stack Fashion Platform — In Progress',
-    description: 'A full-stack fashion e-commerce platform with AI-assisted recommendations, a modern storefront, user accounts, and a product management dashboard.',
-    stack: ['React', 'Supabase', 'PostgreSQL', 'Python'],
+    description: 'A premium, full-stack e-commerce ecosystem featuring a virtual try-on experience, an AI style assistant, a comprehensive admin management dashboard, and a dedicated Rapido-style logistics portal with secure PIN verification.',
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Framer Motion'],
     live: null,
     github: null,
     badge: 'In Progress',
@@ -63,8 +63,8 @@ export default function Projects() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
-          gap: '1.75rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.5rem',
         }}>
           {PROJECTS.map((proj, i) => (
             <ProjectCard key={proj.id} proj={proj} index={i} />
@@ -105,11 +105,11 @@ function ProjectCard({ proj, index }) {
         backdropFilter: 'blur(16px)',
         border: `1px solid ${proj.accent}30`,
         borderRadius: 'var(--radius-xl)',
-        padding: '2rem',
+        padding: '1.5rem',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.2rem',
+        gap: '1rem',
         animationDelay: `${index * 0.1}s`,
         transition: 'transform 0.35s var(--ease-spring), box-shadow 0.35s, border-color 0.35s',
       }}

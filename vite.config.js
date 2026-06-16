@@ -7,6 +7,7 @@ export default defineConfig({
     port: 5173,
     open: false,
   },
+  assetsInclude: ['**/*.mp4'],
   optimizeDeps: {
     include: ['three', 'gsap', 'lenis', 'framer-motion', 'lucide-react'],
   },

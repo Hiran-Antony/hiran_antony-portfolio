@@ -1,12 +1,13 @@
 import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import ParticleField from '../three/ParticleField';
-import { Download, ArrowDown, Eye } from 'lucide-react';
+import { Mail, ArrowDown, Eye } from 'lucide-react';
+import avatarImg from '../assets/avatar.png';
 
 const ROLES = ['Full Stack Developer', 'Web Designer', 'Creative Technologist'];
 const NAME   = 'Hiran Antony R';
 
-export default function Hero() {
+export default function Hero({ introComplete }) {
   const lettersRef   = useRef([]);
   const roleRef      = useRef(null);
   const bioRef       = useRef(null);
@@ -16,6 +17,7 @@ export default function Hero() {
 
   // Initial Entry Animations
   useEffect(() => {
+    if (!introComplete) return;
     const letters = lettersRef.current.filter(Boolean);
     gsap.fromTo(
       letters,
@@ -40,7 +42,7 @@ export default function Hero() {
     gsap.to(arrowRef.current, {
       y: 12, repeat: -1, yoyo: true, duration: 0.9, ease: 'sine.inOut',
     });
-  }, []);
+  }, [introComplete]);
 
   // Role switcher
   useEffect(() => {
@@ -79,14 +81,18 @@ export default function Hero() {
 
       {/* Content */}
       <div
-        className="container"
+        className="container hero-content-wrapper"
         style={{
           position: 'relative',
           zIndex: 2,
           paddingTop: '7rem',
           paddingBottom: '5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
+        <div className="hero-text-content" style={{ position: 'relative', zIndex: 3, flex: '1.2', marginTop: '-120px' }}>
         {/* Mono label */}
         <p style={{
           fontFamily: 'var(--font-mono)',
@@ -168,13 +174,17 @@ export default function Hero() {
           >
             <Eye size={16} /> View My Work
           </button>
-          <a
-            href="/cv.pdf"
-            download
+          <button
             className="btn-outline"
+            onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}
           >
-            <Download size={16} /> Download CV
-          </a>
+            <Mail size={16} /> Contact Me
+          </button>
+        </div>
+        </div>
+
+        <div className="hero-image-wrapper">
+          <img src={avatarImg} alt="Hiran Antony R" className="hero-image-img" />
         </div>
       </div>
 
@@ -215,19 +225,19 @@ export default function Hero() {
           font-size: 72px;
           line-height: 1.1;
           width: 100%;
-          max-width: 60%;
+          max-width: 100%;
         }
         @media (max-width: 1279px) {
           .hero-name {
             font-size: 64px;
-            max-width: 70%;
+            max-width: 100%;
           }
         }
         @media (max-width: 1023px) {
           .hero-name {
             font-size: 48px;
             line-height: 1.15;
-            max-width: 80%;
+            max-width: 100%;
           }
         }
         @media (max-width: 767px) {
@@ -246,6 +256,53 @@ export default function Hero() {
         @media (max-width: 767px) {
           .hero-role {
             font-size: 22px;
+          }
+        }
+        .hero-image-wrapper {
+          flex: 0.8;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          position: relative;
+          z-index: 1;
+          margin-top: -180px;
+        }
+        .hero-image-img {
+          width: 100%;
+          max-width: 520px;
+          height: auto;
+          transform: scale(1.1);
+          mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+          -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+          opacity: 0;
+          animation: fadeInUp 1s 0.4s forwards;
+        }
+        
+        @media (max-width: 1023px) {
+          .hero-content-wrapper {
+            flex-direction: column;
+            justify-content: center;
+          }
+          .hero-text-content {
+            flex: none;
+            width: 100%;
+          }
+          .hero-image-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            opacity: 0.25;
+            pointer-events: none;
+          }
+          .hero-image-img {
+            max-width: 120%;
+            min-width: 600px;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
           }
         }
       `}</style>

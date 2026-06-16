@@ -1,195 +1,294 @@
-import { Briefcase, Clock } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const EXP_PLACEHOLDERS = [
-  { role: 'Freelance Web Developer', company: 'Self-employed', period: '2024 – Present', desc: 'Designed and deployed production websites for real clients including robertrajiah.in, handling end-to-end development, deployment on Vercel, and client communication.', tags: ['HTML','CSS','JavaScript','Vercel'], current: true },
-  { role: 'Internship Opportunity', company: 'Open to offers', period: 'Seeking 2025', desc: 'Actively seeking internships in web development and software engineering. Available for remote or on-site opportunities.', tags: ['React','Node.js','Python'], current: false, placeholder: true },
-];
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Experience() {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      gsap.from(".exp-panels", {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".exp-panels",
+          start: "top 75%"
+        }
+      });
+
+      gsap.from(".exp-panel", {
+        opacity: 0,
+        x: (i) => i === 0 ? -30 : 30,
+        duration: 0.7,
+        delay: 0.2,
+        stagger: 0.15,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".exp-panels",
+          start: "top 75%"
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section
-      id="experience"
-      className="section-wrap"
-      style={{
-        background: 'var(--espresso)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Code rain overlay */}
-      <CodeRain />
+    <section className="experience-section" id="experience" ref={sectionRef}>
+      
+      {/* Section Header */}
+      <div className="exp-header">
+        <p className="exp-label">05 — EXPERIENCE</p>
+        <h2 className="exp-heading">
+          What I've <span>Been Doing</span>
+        </h2>
+      </div>
 
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-        <div className="reveal" style={{ marginBottom: '4rem', textAlign: 'center' }}>
-          <p className="section-label" style={{ color: 'var(--gold)' }}>05 &mdash; Experience</p>
-          <h2 className="section-title light">Work <span className="text-gradient">Timeline</span></h2>
+      {/* Two Status Panels */}
+      <div className="exp-panels">
+
+        {/* Panel 1 — Freelancing */}
+        <div className="exp-panel">
+          <div className="exp-panel-icon">💼</div>
+          <p className="exp-panel-tag">Currently</p>
+          <h3 className="exp-panel-title">Freelancing</h3>
+          <p className="exp-panel-since">Since 2025</p>
+          <p className="exp-panel-desc">
+            Building and deploying real client websites 
+            independently — from design to deployment.
+          </p>
+          <div className="exp-panel-stat">
+            <span className="stat-number">2+</span>
+            <span className="stat-label">
+              Client Sites Delivered
+            </span>
+          </div>
+          <div className="exp-status-dot active">
+            <span className="dot-pulse" />
+            Live & Taking Projects
+          </div>
         </div>
 
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.5rem',
-          maxWidth: '800px',
-          margin: '0 auto',
-        }}>
-          {EXP_PLACEHOLDERS.map((exp, i) => (
-            <div
-              key={i}
-              className="reveal exp-card"
-              style={{
-                background: 'rgba(250,247,242,0.05)',
-                border: `1px solid ${exp.placeholder ? 'rgba(201,169,110,0.15)' : 'rgba(201,169,110,0.3)'}`,
-                borderLeft: `3px solid ${exp.placeholder ? 'rgba(201,169,110,0.3)' : 'var(--gold)'}`,
-                borderRadius: 'var(--radius-lg)',
-                padding: '2rem 2.5rem',
-                position: 'relative',
-                backdropFilter: 'blur(8px)',
-                transition: 'transform 0.3s var(--ease-spring), box-shadow 0.3s',
-                opacity: exp.placeholder ? 0.6 : 1,
-              }}
-            >
-              {exp.current && (
-                <div style={{
-                  position: 'absolute',
-                  top: '1.5rem', right: '1.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.7rem',
-                  color: '#4CAF50',
-                  background: 'rgba(76,175,80,0.12)',
-                  border: '1px solid rgba(76,175,80,0.3)',
-                  borderRadius: '999px',
-                  padding: '0.2rem 0.6rem',
-                }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4CAF50', display: 'inline-block', animation: 'pulseDot 1.5s ease-in-out infinite' }} />
-                  Active
-                </div>
-              )}
+        {/* Divider */}
+        <div className="exp-divider" />
 
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
-                <div style={{
-                  width: 40, height: 40,
-                  background: 'rgba(201,169,110,0.15)',
-                  border: '1px solid rgba(201,169,110,0.3)',
-                  borderRadius: 'var(--radius-md)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  {exp.placeholder ? <Clock size={18} color="var(--gold)" /> : <Briefcase size={18} color="var(--gold)" />}
-                </div>
-                <div>
-                  <h3 style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1.25rem',
-                    fontWeight: 700,
-                    color: exp.placeholder ? 'rgba(232,213,176,0.5)' : 'var(--cream)',
-                    marginBottom: '0.2rem',
-                  }}>
-                    {exp.role}
-                  </h3>
-                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--gold)', fontWeight: 600 }}>
-                      {exp.company}
-                    </span>
-                    <span style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.75rem',
-                      color: 'rgba(232,213,176,0.45)',
-                    }}>
-                      {exp.period}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <p style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.92rem',
-                color: 'rgba(232,213,176,0.65)',
-                lineHeight: 1.75,
-                marginBottom: '1.2rem',
-              }}>
-                {exp.desc}
-              </p>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                {exp.tags.map(tag => (
-                  <span key={tag} style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.7rem',
-                    color: 'var(--gold)',
-                    background: 'rgba(201,169,110,0.1)',
-                    border: '1px solid rgba(201,169,110,0.2)',
-                    borderRadius: '4px',
-                    padding: '0.18rem 0.5rem',
-                  }}>
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+        {/* Panel 2 — Internship */}
+        <div className="exp-panel">
+          <div className="exp-panel-icon">🚀</div>
+          <p className="exp-panel-tag">Looking For</p>
+          <h3 className="exp-panel-title">Internship</h3>
+          <p className="exp-panel-since">
+            Open · Available Now
+          </p>
+          <p className="exp-panel-desc">
+            Seeking internship opportunities in 
+            web development and software engineering 
+            to grow with a real team.
+          </p>
+          <div className="exp-panel-stat">
+            <span className="stat-number">B.Tech</span>
+            <span className="stat-label">
+              CSE · Karunya Institute
+            </span>
+          </div>
+          <div className="exp-status-dot seeking">
+            <span className="dot-pulse seeking" />
+            Open to Opportunities
+          </div>
         </div>
+
       </div>
 
       <style>{`
-        .exp-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(201,169,110,0.1);
+        .experience-section {
+          padding: 100px 5%;
+          background: #FAF7F2;
+          min-height: 60vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        /* HEADER */
+        .experience-section .exp-header {
+          text-align: center;
+          margin-bottom: 64px;
+        }
+        .experience-section .exp-label {
+          font-size: 11px;
+          letter-spacing: 0.18em;
+          color: #C9A96E;
+          text-transform: uppercase;
+          margin-bottom: 12px;
+          font-family: 'JetBrains Mono', monospace;
+        }
+        .experience-section .exp-heading {
+          font-size: 48px;
+          font-weight: 700;
+          color: #3D2B1F;
+          letter-spacing: -0.5px;
+        }
+        .experience-section .exp-heading span {
+          color: #E85D26;
+        }
+
+        /* PANELS WRAPPER */
+        .experience-section .exp-panels {
+          display: flex;
+          align-items: stretch;
+          gap: 0;
+          max-width: 860px;
+          width: 100%;
+          background: #FFFFFF;
+          border-radius: 24px;
+          border: 0.5px solid #E0D8CC;
+          box-shadow: 0 8px 48px rgba(61,43,31,0.07);
+          overflow: hidden;
+        }
+
+        /* SINGLE PANEL */
+        .experience-section .exp-panel {
+          flex: 1;
+          padding: 48px 44px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        /* VERTICAL DIVIDER */
+        .experience-section .exp-divider {
+          width: 0.5px;
+          background: linear-gradient(
+            to bottom,
+            transparent,
+            #C9A96E55 20%,
+            #C9A96E55 80%,
+            transparent
+          );
+          flex-shrink: 0;
+        }
+
+        /* PANEL CONTENT */
+        .experience-section .exp-panel-icon {
+          font-size: 32px;
+          margin-bottom: 4px;
+        }
+        .experience-section .exp-panel-tag {
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #C9A96E;
+          font-weight: 600;
+          font-family: 'JetBrains Mono', monospace;
+        }
+        .experience-section .exp-panel-title {
+          font-size: 36px;
+          font-weight: 700;
+          color: #3D2B1F;
+          letter-spacing: -0.5px;
+          line-height: 1;
+        }
+        .experience-section .exp-panel-since {
+          font-size: 13px;
+          color: #E85D26;
+          font-weight: 600;
+        }
+        .experience-section .exp-panel-desc {
+          font-size: 14px;
+          color: #3D2B1Faa;
+          line-height: 1.7;
+          margin-top: 4px;
+        }
+
+        /* STAT BLOCK */
+        .experience-section .exp-panel-stat {
+          display: flex;
+          align-items: baseline;
+          gap: 10px;
+          margin-top: 8px;
+          padding: 14px 18px;
+          background: #FAF7F2;
+          border-radius: 12px;
+          border: 0.5px solid #E0D8CC;
+        }
+        .experience-section .stat-number {
+          font-size: 26px;
+          font-weight: 700;
+          color: #3D2B1F;
+        }
+        .experience-section .stat-label {
+          font-size: 12px;
+          color: #3D2B1F88;
+        }
+
+        /* STATUS DOT */
+        .experience-section .exp-status-dot {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          font-weight: 500;
+          margin-top: 8px;
+          color: #3D2B1Faa;
+        }
+        .experience-section .dot-pulse {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #22C55E;
+          display: inline-block;
+          position: relative;
+          animation: pulseDot 2s ease-in-out infinite;
+        }
+        .experience-section .dot-pulse.seeking {
+          background: #C9A96E;
+          animation: pulseDotSeeking 2s ease-in-out infinite;
         }
         @keyframes pulseDot {
-          0%,100% { opacity:1; transform: scale(1); }
-          50%     { opacity:0.4; transform: scale(1.4); }
+          0%, 100% { 
+            box-shadow: 0 0 0 0 rgba(34,197,94,0.4); 
+          }
+          50% { 
+            box-shadow: 0 0 0 6px rgba(34,197,94,0); 
+          }
+        }
+        @keyframes pulseDotSeeking {
+          0%, 100% { 
+            box-shadow: 0 0 0 0 rgba(201,169,110,0.4); 
+          }
+          50% { 
+            box-shadow: 0 0 0 6px rgba(201,169,110,0); 
+          }
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+          .experience-section .exp-panels {
+            flex-direction: column;
+          }
+          .experience-section .exp-divider {
+            width: 100%;
+            height: 0.5px;
+            background: linear-gradient(
+              to right,
+              transparent,
+              #C9A96E55 20%,
+              #C9A96E55 80%,
+              transparent
+            );
+          }
+          .experience-section .exp-panel {
+            padding: 36px 28px;
+          }
+          .experience-section .exp-heading {
+            font-size: 36px;
+          }
         }
       `}</style>
     </section>
-  );
-}
-
-/* Simple CSS code-rain canvas */
-function CodeRain() {
-  return (
-    <div style={{
-      position: 'absolute',
-      inset: 0,
-      overflow: 'hidden',
-      opacity: 0.06,
-      pointerEvents: 'none',
-      zIndex: 0,
-      fontFamily: 'var(--font-mono)',
-      fontSize: '13px',
-      color: '#C9A96E',
-      display: 'flex',
-      gap: '28px',
-    }}>
-      {Array.from({ length: 20 }).map((_, col) => (
-        <div
-          key={col}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            animation: `rainFall ${3 + col * 0.3}s linear infinite`,
-            animationDelay: `${col * 0.15}s`,
-          }}
-        >
-          {Array.from({ length: 30 }).map((_, row) => (
-            <span key={row}>
-              {String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96))}
-            </span>
-          ))}
-        </div>
-      ))}
-      <style>{`
-        @keyframes rainFall {
-          from { transform: translateY(-100%); }
-          to   { transform: translateY(100%); }
-        }
-      `}</style>
-    </div>
   );
 }
