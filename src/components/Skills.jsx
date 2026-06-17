@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import SolarSystem from '../three/SolarSystem';
+import nebulaBg from '../assets/skills-nebula.jpeg';
 
 const SKILL_CATEGORIES = [
   { name: 'Frontend',  color: '#E85D26', skills: ['HTML5','CSS3','JavaScript','Responsive Design'] },
@@ -57,6 +58,7 @@ export default function Skills() {
         minHeight: '100vh',
         overflow: 'hidden',
         position: 'relative',
+        backgroundImage: `url(${nebulaBg})`
       }}
     >
       {/* 3D Solar System */}
@@ -191,7 +193,6 @@ export default function Skills() {
       <style>{`
         .skills-section {
           position: relative;
-          background-image: url('/src/assets/skills-nebula.jpeg');
           background-size: cover;
           background-position: center center;
           background-repeat: no-repeat;

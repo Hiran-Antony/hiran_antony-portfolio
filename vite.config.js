@@ -11,4 +11,20 @@ export default defineConfig({
   optimizeDeps: {
     include: ['three', 'gsap', 'lenis', 'framer-motion', 'lucide-react'],
   },
+  build: {
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) return 'react-vendor';
+            if (id.includes('gsap')) return 'gsap-vendor';
+            if (id.includes('three') || id.includes('@react-three')) return 'three-vendor';
+            if (id.includes('framer-motion')) return 'framer-vendor';
+            return 'vendor';
+          }
+        }
+      }
+    }
+  }
 })

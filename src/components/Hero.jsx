@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import ParticleField from '../three/ParticleField';
 import { Mail, ArrowDown, Eye } from 'lucide-react';
-import avatarImg from '../assets/avatar.png';
+import avatarImg from '../assets/avatar.webp';
 
 const ROLES = ['Full Stack Developer', 'Web Designer', 'Creative Technologist'];
 const NAME   = 'Hiran Antony R';
