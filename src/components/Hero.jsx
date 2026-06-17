@@ -24,10 +24,10 @@ export default function Hero({ introComplete }) {
       { opacity: 0, y: -60, rotateX: -90 },
       {
         opacity: 1, y: 0, rotateX: 0,
-        duration: 0.6,
-        stagger: 0.04,
-        ease: 'back.out(1.7)',
-        delay: 0.1,
+        duration: 0.9,
+        stagger: 0.08,
+        ease: 'back.out(1.5)',
+        delay: 0.4,
       }
     );
 
@@ -35,7 +35,7 @@ export default function Hero({ introComplete }) {
     gsap.fromTo(
       [bioRef.current, ctaRef.current],
       { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.6, stagger: 0.15 }
+      { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 1.4, stagger: 0.2 }
     );
 
     // Arrow bounce
@@ -266,6 +266,7 @@ export default function Hero({ introComplete }) {
           position: relative;
           z-index: 1;
           margin-top: -180px;
+          min-height: 520px;
         }
         .hero-image-img {
           width: 100%;

@@ -74,15 +74,7 @@ export default function Navbar(props) {
           ))}
         </ul>
 
-        {/* CTA */}
-        <a
-          href="mailto:hiranantony@karunya.edu.in"
-          className="nav-cta"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Hire Me
-        </a>
+
 
         {/* Hamburger */}
         <button
@@ -143,7 +135,14 @@ export default function Navbar(props) {
           transition: box-shadow 0.3s, transform 0.3s var(--ease-spring);
         }
         .nav-logo:hover { transform: scale(1.08); box-shadow: 0 0 28px rgba(201,169,110,0.55); }
-        .nav-links { list-style: none; display: flex; gap: 0.5rem; }
+        .nav-links { 
+          list-style: none; 
+          display: flex; 
+          gap: 0.5rem; 
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+        }
         .nav-link {
           font-family: var(--font-body);
           font-size: 0.9rem;

@@ -3,8 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
-import CinematicIntro from './components/CinematicIntro';
-import introVideo from './assets/videos/intro.mp4';
+import Loader          from './components/Loader';
 import Navbar          from './components/Navbar';
 import Hero            from './components/Hero';
 import About           from './components/About';
@@ -57,20 +56,10 @@ function ConfettiBurst() {
 }
 
 export default function App() {
-  const hasVisited = sessionStorage.getItem("visited");
-  const [introComplete, setIntroComplete] = useState(!!hasVisited);
+  const [introComplete, setIntroComplete] = useState(false);
   const [confetti, setConfetti] = useState(false);
   const progressRef = useRef(null);
   const lenisRef    = useRef(null);
-
-  // Preload intro video
-  useEffect(() => {
-    if (hasVisited) return;
-    const video = document.createElement("video");
-    video.src = introVideo;
-    video.preload = "auto";
-    video.load();
-  }, [hasVisited]);
 
   // Custom cursor
   useCursor();
@@ -95,7 +84,6 @@ export default function App() {
   // Lenis smooth scroll
   useEffect(() => {
     if (!introComplete) return;
-
     const lenis = new Lenis({
       duration: 1.2,
       easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -122,21 +110,18 @@ export default function App() {
       {/* Custom wired mouse progress indicator */}
       <ScrollMouse />
 
-      {/* Cinematic intro plays first */}
-      {!hasVisited && (
-        <CinematicIntro onComplete={() => {
-          sessionStorage.setItem("visited", "true");
-          setIntroComplete(true);
-        }} />
+      {/* Loader plays first */}
+      {!introComplete && (
+        <Loader onComplete={() => setIntroComplete(true)} />
       )}
 
       {/* Konami confetti */}
       {confetti && <ConfettiBurst />}
 
-      {/* Portfolio always rendered underneath, instantly ready when intro finishes */}
+      {/* Portfolio always rendered underneath, instantly ready when loader finishes */}
       <div style={{ 
         opacity: introComplete ? 1 : 0,
-        transition: "opacity 0.3s ease",
+        transition: "opacity 0.5s ease",
         visibility: introComplete ? 'visible' : 'hidden'
       }}>
         <Navbar hidden={!introComplete} />
