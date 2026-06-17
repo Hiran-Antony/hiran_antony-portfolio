@@ -24,10 +24,10 @@ export default function Hero({ introComplete }) {
       { opacity: 0, y: -60, rotateX: -90 },
       {
         opacity: 1, y: 0, rotateX: 0,
-        duration: 0.7,
-        stagger: 0.055,
+        duration: 0.6,
+        stagger: 0.04,
         ease: 'back.out(1.7)',
-        delay: 0.3,
+        delay: 0.1,
       }
     );
 
@@ -35,7 +35,7 @@ export default function Hero({ introComplete }) {
     gsap.fromTo(
       [bioRef.current, ctaRef.current],
       { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 1.6, stagger: 0.15 }
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.6, stagger: 0.15 }
     );
 
     // Arrow bounce
@@ -275,7 +275,7 @@ export default function Hero({ introComplete }) {
           mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
           -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
           opacity: 0;
-          animation: fadeInUp 1s 0.4s forwards;
+          animation: fadeInUp 0.8s 0.2s forwards;
         }
         
         @media (max-width: 1023px) {
@@ -286,12 +286,14 @@ export default function Hero({ introComplete }) {
           .hero-text-content {
             flex: none;
             width: 100%;
+            margin-top: 0 !important;
           }
           .hero-image-wrapper {
             position: absolute;
-            top: 50%;
+            top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
+            margin-top: 0;
             width: 100%;
             height: 100%;
             justify-content: center;

@@ -282,7 +282,7 @@ export default function Experience() {
             );
           }
           .experience-section .exp-panel {
-            padding: 36px 28px;
+            padding: 24px 20px;
           }
           .experience-section .exp-heading {
             font-size: 36px;

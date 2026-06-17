@@ -86,7 +86,7 @@ export default function Skills() {
       </div>
 
       {/* Info Card Centered Below */}
-      <div style={{
+      <div className="skills-info-card" style={{
         position: 'absolute',
         bottom: '15%',
         left: '50%',
@@ -143,7 +143,7 @@ export default function Skills() {
       </div>
 
       {/* Legend / Manual Selectors */}
-      <div style={{
+      <div className="skills-selectors" style={{
         position: 'absolute',
         bottom: '3rem',
         left: '50%',
@@ -159,6 +159,7 @@ export default function Skills() {
           return (
             <div
               key={cat.name}
+              className="skill-cat-btn"
               onClick={() => handleManualSelect(i)}
               style={{
                 display: 'flex',
@@ -211,6 +212,26 @@ export default function Skills() {
           height: 80px;
           background: rgba(10,5,2,0.95);
           z-index: 1;
+        }
+        @media (max-width: 768px) {
+          .skills-section::after {
+            display: none !important;
+          }
+          .skills-info-card {
+            top: auto !important;
+            bottom: 6rem !important;
+          }
+          .skills-selectors {
+            bottom: 1.5rem !important;
+            padding: 0 0.5rem;
+            gap: 0.5rem !important;
+            width: 100% !important;
+            max-width: 400px !important;
+          }
+          .skill-cat-btn {
+            padding: 0.3rem 0.6rem !important;
+            font-size: 0.65rem !important;
+          }
         }
       `}</style>
     </section>

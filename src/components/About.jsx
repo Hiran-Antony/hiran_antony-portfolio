@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Users, Award, Cpu, Shield, Phone, Mail, GraduationCap, MapPin } from 'lucide-react';
+import hiranImg from '../assets/hiran.jpeg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -106,34 +107,16 @@ export default function About() {
                 boxShadow: 'var(--shadow-espresso)',
               }}
             >
-              {/* Avatar placeholder */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.75rem',
-              }}>
-                <div style={{
-                  width: '90px', height: '90px',
-                  borderRadius: '50%',
-                  background: 'var(--gold)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '2.5rem',
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 700,
-                  color: 'var(--espresso)',
-                }}>
-                  HA
-                </div>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--gold)', opacity: 0.6 }}>
-                  Add your photo
-                </span>
-              </div>
+              <img
+                src={hiranImg}
+                alt="Hiran Antony R"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
               {/* Shimmer sweep */}
               <div className="shimmer-overlay" />
             </div>
@@ -239,9 +222,11 @@ export default function About() {
       </div>
 
       <style>{`
-        .about-grid { @apply; }
         @media (max-width: 768px) {
-          .about-grid { grid-template-columns: 1fr !important; }
+          .about-grid { 
+            grid-template-columns: 1fr !important; 
+            gap: 2rem !important;
+          }
         }
 
         .photo-shimmer:hover .shimmer-overlay {

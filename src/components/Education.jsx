@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { GraduationCap, BookOpen, Award } from 'lucide-react';
+import BorderGlow from './ui/BorderGlow';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -107,9 +108,10 @@ export default function Education() {
                   marginBottom: '3.5rem',
                   gap: '0',
                 }}
+                className="edu-timeline-row"
               >
                 {/* Left content */}
-                <div style={{ textAlign: 'right', paddingRight: '2rem' }}>
+                <div className="edu-col-left" style={{ textAlign: 'right', paddingRight: '2rem' }}>
                   {isLeft ? (
                     <EduCard item={item} />
                   ) : (
@@ -141,7 +143,7 @@ export default function Education() {
                 </div>
 
                 {/* Right content */}
-                <div style={{ paddingLeft: '2rem' }}>
+                <div className="edu-col-right" style={{ paddingLeft: '2rem' }}>
                   {isLeft ? (
                     <YearBadge year={item.year} color={item.color} align="left" />
                   ) : (
@@ -166,9 +168,24 @@ export default function Education() {
           transform: translateY(-4px) scale(1.02);
           box-shadow: var(--shadow-gold);
         }
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
           .edu-timeline-row {
-            grid-template-columns: 40px 1fr !important;
+            grid-template-columns: 1fr 40px 1fr !important;
+            margin-bottom: 2rem !important;
+          }
+          .edu-col-left {
+            padding-right: 0.5rem !important;
+          }
+          .edu-col-right {
+            padding-left: 0.5rem !important;
+          }
+          .edu-node {
+            width: 36px !important;
+            height: 36px !important;
+          }
+          .edu-node svg {
+            width: 16px;
+            height: 16px;
           }
         }
       `}</style>
@@ -178,47 +195,52 @@ export default function Education() {
 
 function EduCard({ item }) {
   return (
-    <div
-      className="glass edu-card"
-      style={{
-        padding: '1.5rem 1.75rem',
-        borderRadius: 'var(--radius-lg)',
-        textAlign: 'left',
-      }}
-    >
-      <h3 style={{
-        fontFamily: 'var(--font-display)',
-        fontSize: '1.05rem',
-        fontWeight: 700,
-        color: 'var(--espresso)',
-        marginBottom: '0.35rem',
-        lineHeight: 1.3,
-      }}>
-        {item.degree}
-      </h3>
-      <p style={{
-        fontFamily: 'var(--font-body)',
-        fontSize: '0.88rem',
-        color: item.color,
-        fontWeight: 600,
-        marginBottom: '0.2rem',
-      }}>
-        {item.school}
-      </p>
-      {item.location && (
-        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--espresso-mid)', marginBottom: '0.3rem' }}>
-          {item.location}
+    <BorderGlow glowIntensity={3} glowColor="#C9A96E" glowSize={150} backgroundColor="#FAF7F2">
+      <div
+        className="edu-card"
+        style={{
+          background: 'rgba(255, 255, 255, 0.85)',
+          padding: '1.5rem 1.75rem',
+          borderRadius: '16px',
+          textAlign: 'left',
+          boxShadow: 'none',
+          border: 'none',
+        }}
+      >
+        <h3 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '1.05rem',
+          fontWeight: 700,
+          color: 'var(--espresso)',
+          marginBottom: '0.35rem',
+          lineHeight: 1.3,
+        }}>
+          {item.degree}
+        </h3>
+        <p style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.88rem',
+          color: item.color,
+          fontWeight: 600,
+          marginBottom: '0.2rem',
+        }}>
+          {item.school}
         </p>
-      )}
-      <p style={{
-        fontFamily: 'var(--font-mono)',
-        fontSize: '0.78rem',
-        color: 'var(--espresso-light)',
-        marginTop: '0.5rem',
-      }}>
-        {item.detail}
-      </p>
-    </div>
+        {item.location && (
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--espresso-mid)', marginBottom: '0.3rem' }}>
+            {item.location}
+          </p>
+        )}
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.78rem',
+          color: 'var(--espresso-light)',
+          marginTop: '0.5rem',
+        }}>
+          {item.detail}
+        </p>
+      </div>
+    </BorderGlow>
   );
 }
 

@@ -43,16 +43,7 @@ body::before {
 /* ─── Selection ──────────────────────────────────────────── */
 ::selection { background: rgba(201,169,110,0.3); color: var(--espresso); }
 
-/* ─── Scroll progress bar ────────────────────────────────── */
-#scroll-progress {
-  position: fixed;
-  top: 0; left: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--gold), var(--ember));
-  z-index: 9999;
-  width: 0%;
-  transition: width 0.1s linear;
-}
+
 
 /* ─── Custom Cursor ──────────────────────────────────────── */
 .cursor-dot {
@@ -79,6 +70,15 @@ body::before {
 }
 .cursor-ring.hovered { width: 56px; height: 56px; border-color: var(--gold); }
 .cursor-dot.clicking { transform: translate(-50%,-50%) scale(0.6); }
+
+@media (max-width: 768px), (pointer: coarse) {
+  .cursor-dot, .cursor-ring {
+    display: none !important;
+  }
+  body, a, button, .btn-gold, .btn-outline {
+    cursor: auto !important;
+  }
+}
 
 /* ─── Typography helpers ─────────────────────────────────── */
 .font-display { font-family: var(--font-display); }
@@ -189,4 +189,14 @@ body::before {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ─── Contact Section Initial States ─────────────────────── */
+.contact-left-item,
+.contact-form-card,
+.contact-field,
+.contact-find-heading,
+.contact-social-icons {
+  opacity: 0;
+  will-change: transform, opacity;
 }

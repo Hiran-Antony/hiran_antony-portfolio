@@ -1,7 +1,12 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, GitBranch, Send, MapPin } from 'lucide-react';
 import WormholePortal from '../three/WormholePortal';
+import { ParticleRain } from './Certifications';
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const SOCIALS = [
   { icon: Mail,     label: 'Email',    href: 'mailto:hiranantony@karunya.edu.in', value: 'hiranantony@karunya.edu.in' },
@@ -48,10 +53,131 @@ export default function Contact() {
     }
   };
 
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+
+    // LEFT SIDE — staggered fade in from left
+    gsap.fromTo(
+      ".contact-left-item",
+      {
+        opacity: 0,
+        x: isMobile ? 0 : -40,
+        y: isMobile ? 20 : 0,
+      },
+      {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".contact-left",
+          start: "top 80%",
+          end: "top 30%",
+          scrub: 1.5,
+          toggleActions: "play reverse play reverse"
+        }
+      }
+    );
+
+    // RIGHT SIDE — form fades in from right
+    gsap.fromTo(
+      ".contact-form-card",
+      {
+        opacity: 0,
+        x: isMobile ? 0 : 40,
+      },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".contact-form-card",
+          start: "top 80%",
+          end: "top 25%",
+          scrub: 1.5,
+          toggleActions: "play reverse play reverse"
+        }
+      }
+    );
+
+    // FORM FIELDS — stagger fade up one by one
+    gsap.fromTo(
+      ".contact-field",
+      {
+        opacity: 0,
+        y: 24,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".contact-form-card",
+          start: "top 70%",
+          end: "top 15%",
+          scrub: 1.2,
+          toggleActions: "play reverse play reverse"
+        }
+      }
+    );
+
+    // HEADING — fades in from bottom
+    gsap.fromTo(
+      ".contact-find-heading",
+      {
+        opacity: 0,
+        y: 30,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".contact-section",
+          start: "top 75%",
+          end: "top 40%",
+          scrub: 1,
+          toggleActions: "play reverse play reverse"
+        }
+      }
+    );
+
+    // SOCIAL ICONS — fade in last, from bottom
+    gsap.fromTo(
+      ".contact-social-icons",
+      {
+        opacity: 0,
+        y: 20,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".contact-social-icons",
+          start: "top 90%",
+          end: "top 60%",
+          scrub: 1,
+          toggleActions: "play reverse play reverse"
+        }
+      }
+    );
+
+    // Cleanup on unmount
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, []);
+
   return (
     <section
       id="contact"
-      className="section-wrap"
+      className="section-wrap contact-section"
       style={{
         background: 'linear-gradient(180deg, #0A0704 0%, #1a0f08 60%, #0A0704 100%)',
         position: 'relative',
@@ -61,6 +187,9 @@ export default function Contact() {
     >
       {/* Wormhole portal background */}
       <WormholePortal />
+
+      {/* Gold particle rain */}
+      <ParticleRain count={60} />
 
       {/* Dark overlay so text is readable */}
       <div style={{
@@ -99,8 +228,8 @@ export default function Contact() {
           className="contact-grid"
         >
           {/* LEFT — Social links */}
-          <div className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{
+          <div className="contact-left" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h3 className="contact-find-heading" style={{
               fontFamily: 'var(--font-display)',
               fontSize: '1.3rem',
               fontWeight: 700,
@@ -110,13 +239,9 @@ export default function Contact() {
               Find me at
             </h3>
             {SOCIALS.map(({ icon: Icon, label, href, value }) => (
-              <motion.div
+              <div
                 key={label}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ type: 'spring', stiffness: 200, damping: 22 }}
-                whileHover={{ x: 6 }}
+                className="contact-left-item"
               >
                 <a
                   href={href || undefined}
@@ -165,11 +290,11 @@ export default function Contact() {
                     }}>{value}</p>
                   </div>
                 </a>
-              </motion.div>
+              </div>
             ))}
 
             {/* Social Media Buttons */}
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+            <div className="contact-social-icons" style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
               <motion.a
                 href="https://linkedin.com/in/hiranantony15"
                 target="_blank"
@@ -229,19 +354,13 @@ export default function Contact() {
           </div>
 
           {/* RIGHT — Contact form */}
-          <motion.div
-            className="reveal"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.16,1,0.3,1] }}
-          >
+          <div className="contact-form-card">
             <form
               onSubmit={handleSubmit}
               style={{
-                background: 'rgba(61,43,31,0.45)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(201,169,110,0.2)',
+                background: 'rgba(61,43,31,0.5)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(201,169,110,0.18)',
                 borderRadius: 'var(--radius-xl)',
                 padding: '2.5rem',
                 display: 'flex',
@@ -255,13 +374,14 @@ export default function Contact() {
               {burst && <BurstEffect />}
 
               {['name', 'phone', 'email'].map(field => (
-                <div key={field} style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <div key={field} className="contact-field" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   <label style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.7rem',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                     color: 'rgba(201,169,110,0.65)',
+                    fontWeight: 'bold',
                   }}>
                     {field === 'name' ? 'Your Name' : field === 'phone' ? 'Phone Number' : 'Email Address'}
                   </label>
@@ -274,8 +394,8 @@ export default function Contact() {
                     placeholder={field === 'name' ? 'John Doe' : field === 'phone' ? '+91 9360276068' : 'john@example.com'}
                     className="contact-input"
                     style={{
-                      background: 'rgba(250,247,242,0.04)',
-                      border: '1px solid rgba(201,169,110,0.2)',
+                      background: 'rgba(61,43,31,0.5)',
+                      border: '1px solid rgba(201,169,110,0.18)',
                       borderRadius: 'var(--radius-md)',
                       padding: '0.8rem 1rem',
                       fontFamily: 'var(--font-body)',
@@ -289,13 +409,14 @@ export default function Contact() {
                 </div>
               ))}
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+              <div className="contact-field" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                 <label style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.7rem',
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   color: 'rgba(201,169,110,0.65)',
+                  fontWeight: 'bold',
                 }}>
                   Message
                 </label>
@@ -308,8 +429,8 @@ export default function Contact() {
                   rows={5}
                   className="contact-input"
                   style={{
-                    background: 'rgba(250,247,242,0.04)',
-                    border: '1px solid rgba(201,169,110,0.2)',
+                    background: 'rgba(61,43,31,0.5)',
+                    border: '1px solid rgba(201,169,110,0.18)',
                     borderRadius: 'var(--radius-md)',
                     padding: '0.8rem 1rem',
                     fontFamily: 'var(--font-body)',
@@ -323,37 +444,40 @@ export default function Contact() {
                 />
               </div>
 
-              <button
-                ref={btnRef}
-                type="submit"
-                disabled={sending || sent}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.6rem',
-                  padding: '0.9rem 2rem',
-                  background: sent
-                    ? 'linear-gradient(135deg,#4CAF50,#2E7D32)'
-                    : 'linear-gradient(135deg, var(--gold), var(--ember))',
-                  color: sent ? '#fff' : 'var(--espresso)',
-                  fontFamily: 'var(--font-body)',
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  border: 'none',
-                  borderRadius: 'var(--radius-full)',
-                  cursor: sending || sent ? 'default' : 'none',
-                  transition: 'transform 0.25s var(--ease-spring), box-shadow 0.25s, background 0.4s',
-                  boxShadow: '0 0 24px rgba(201,169,110,0.35)',
-                }}
-                onMouseEnter={e => { if (!sending && !sent) e.currentTarget.style.transform = 'scale(1.04)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
-              >
-                {sent ? '✓ Message Sent!' : sending ? 'Sending...' : <><Send size={16} /> Send Message</>}
-              </button>
+              <div className="contact-field">
+                <button
+                  ref={btnRef}
+                  type="submit"
+                  disabled={sending || sent}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.6rem',
+                    padding: '0.9rem 2rem',
+                    background: sent
+                      ? 'linear-gradient(135deg,#4CAF50,#2E7D32)'
+                      : 'linear-gradient(135deg, var(--gold), var(--ember))',
+                    color: sent ? '#fff' : 'var(--espresso)',
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    border: 'none',
+                    borderRadius: 'var(--radius-full)',
+                    cursor: sending || sent ? 'default' : 'none',
+                    transition: 'transform 0.25s var(--ease-spring), box-shadow 0.25s, background 0.4s',
+                    boxShadow: '0 0 24px rgba(201,169,110,0.35)',
+                    width: '100%',
+                  }}
+                  onMouseEnter={e => { if (!sending && !sent) e.currentTarget.style.transform = 'scale(1.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+                >
+                  {sent ? '✓ Message Sent!' : sending ? 'Sending...' : <><Send size={16} /> Send Message</>}
+                </button>
+              </div>
             </form>
-          </motion.div>
-        </div>
+          </div>
+          </div>
       </div>
 
       {/* Footer */}
@@ -396,7 +520,7 @@ export default function Contact() {
         .contact-input::placeholder { color: rgba(232,213,176,0.25); }
         .social-link:hover {
           border-color: rgba(201,169,110,0.4) !important;
-          box-shadow: 0 0 20px rgba(201,169,110,0.12) !important;
+          boxShadow: 0 0 20px rgba(201,169,110,0.12) !important;
         }
       `}</style>
     </section>

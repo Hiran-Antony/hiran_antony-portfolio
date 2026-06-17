@@ -17,24 +17,11 @@ import Contact         from './components/Contact';
 
 import useCursor           from './hooks/useCursor';
 import useScrollAnimation  from './hooks/useScrollAnimation';
+import ScrollMouse         from './components/ScrollMouse';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ── Konami code ──────────────────────────────────────────────
-const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-
-function useKonami(cb) {
-  const seq = useRef([]);
-  useEffect(() => {
-    const handler = (e) => {
-      seq.current = [...seq.current, e.key].slice(-KONAMI.length);
-      if (seq.current.join(',') === KONAMI.join(',')) cb();
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [cb]);
-}
-
+// ── Scroll Trigger for Confetti ──────────────────────────────
 function ConfettiBurst() {
   const colors = ['#C9A96E','#E85D26','#E8D5B0','#3D2B1F','#A07C45','#FAF7F2'];
   const pieces = Array.from({ length: 80 }, (_, i) => ({
@@ -91,11 +78,19 @@ export default function App() {
   // Scroll animations (runs after load)
   useScrollAnimation();
 
-  // Konami easter egg
-  useKonami(() => {
-    setConfetti(true);
-    setTimeout(() => setConfetti(false), 2500);
-  });
+  // Trigger confetti when reaching Certifications section
+  useEffect(() => {
+    const trigger = ScrollTrigger.create({
+      trigger: '#certifications',
+      start: 'top 50%',
+      onEnter: () => {
+        setConfetti(true);
+        setTimeout(() => setConfetti(false), 3000);
+      },
+      once: true
+    });
+    return () => trigger.kill();
+  }, []);
 
   // Lenis smooth scroll
   useEffect(() => {
@@ -118,27 +113,14 @@ export default function App() {
     };
   }, [introComplete]);
 
-  // Scroll progress bar
-  useEffect(() => {
-    const el = document.getElementById('scroll-progress');
-    if (!el) return;
-    const onScroll = () => {
-      const scrollTop  = window.scrollY;
-      const docHeight  = document.documentElement.scrollHeight - window.innerHeight;
-      el.style.width   = `${(scrollTop / docHeight) * 100}%`;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [introComplete]);
-
   return (
     <>
       {/* Custom cursor elements */}
       <div className="cursor-dot"  />
       <div className="cursor-ring" />
 
-      {/* Scroll progress bar */}
-      <div id="scroll-progress" />
+      {/* Custom wired mouse progress indicator */}
+      <ScrollMouse />
 
       {/* Cinematic intro plays first */}
       {!hasVisited && (

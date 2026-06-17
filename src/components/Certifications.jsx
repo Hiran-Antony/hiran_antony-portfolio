@@ -126,32 +126,32 @@ function CertCard({ cert, index, setLightboxImg }) {
   );
 }
 
-function ParticleRain() {
-  const particles = Array.from({ length: 24 }, (_, i) => ({
+export function ParticleRain({ count = 80 }) {
+  const particles = Array.from({ length: count }, (_, i) => ({
     id: i,
-    left:     `${(i / 24) * 100 + Math.sin(i) * 4}%`,
-    size:     `${2 + (i % 3)}px`,
-    duration: `${5 + (i % 5)}s`,
-    delay:    `${(i * 0.25) % 6}s`,
-    opacity:  0.12 + (i % 4) * 0.06,
+    left:     `${(i / count) * 100 + Math.sin(i) * 2}%`,
+    size:     `${3 + (i % 4)}px`,
+    duration: `${4 + (i % 5)}s`,
+    delay:    `${(i * 0.1) % 6}s`,
+    opacity:  0.4 + (i % 4) * 0.15,
   }));
   return (
-    <div style={{ position:'absolute', inset:0, overflow:'hidden', pointerEvents:'none', zIndex:1 }}>
+    <div style={{ position:'absolute', inset:0, overflow:'hidden', pointerEvents:'none', zIndex: 10 }}>
       {particles.map(p => (
         <div key={p.id} style={{
-          position:'absolute', top:'-10px', left:p.left,
+          position:'absolute', top:'-20px', left:p.left,
           width:p.size, height:p.size,
-          background:'var(--gold)', borderRadius:'50%',
+          background:'#C9A96E', borderRadius:'50%',
           opacity:p.opacity,
-          boxShadow:'0 0 6px rgba(201,169,110,0.4)',
+          boxShadow:'0 0 10px rgba(201,169,110,0.8)',
           animation:`particleFall ${p.duration} linear infinite`,
           animationDelay:p.delay,
         }} />
       ))}
       <style>{`
         @keyframes particleFall {
-          from { transform: translateY(-20px); opacity: 0.3; }
-          to   { transform: translateY(100vh);  opacity: 0; }
+          from { transform: translateY(-20px); opacity: 0.8; }
+          to   { transform: translateY(100vh); opacity: 0; }
         }
       `}</style>
     </div>
@@ -290,6 +290,10 @@ export default function Certifications() {
         }
         @media (max-width: 768px) {
           .certs-grid { grid-template-columns: 1fr; }
+          .featured-cert .cert-image-wrap,
+          .cert-card:not(.featured-cert) .cert-image-wrap {
+            min-height: auto !important;
+          }
         }
 
         .cert-card {
