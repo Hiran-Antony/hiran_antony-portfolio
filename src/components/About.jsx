@@ -110,6 +110,9 @@ export default function About() {
               <img
                 src={hiranImg}
                 alt="Hiran Antony R"
+                loading="lazy"
+                width="600"
+                height="800"
                 style={{
                   width: '100%',
                   height: '100%',

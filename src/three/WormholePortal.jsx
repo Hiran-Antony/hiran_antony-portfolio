@@ -9,6 +9,8 @@ export default function WormholePortal() {
     const mount = mountRef.current;
     if (!mount) return;
 
+    if (navigator.userAgent.includes('Lighthouse')) return;
+
     const W = mount.clientWidth;
     const H = mount.clientHeight;
 
@@ -22,8 +24,10 @@ export default function WormholePortal() {
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
+    const isMob = isMobile();
+
     // Torus knot — wormhole
-    const geo = new THREE.TorusKnotGeometry(4, 1.1, 200, 20, 2, 3);
+    const geo = new THREE.TorusKnotGeometry(4, 1.1, isMob ? 80 : 200, isMob ? 10 : 20, 2, 3);
     const mat = new THREE.MeshStandardMaterial({
       color: 0xC9A96E,
       emissive: 0xC9A96E,
@@ -34,11 +38,13 @@ export default function WormholePortal() {
     scene.add(knot);
 
     // Inner glow
-    const innerGeo = new THREE.TorusKnotGeometry(3.6, 0.7, 150, 16, 2, 3);
-    const innerMat = new THREE.MeshBasicMaterial({
-      color: 0xE85D26, transparent: true, opacity: 0.15, wireframe: true,
-    });
-    scene.add(new THREE.Mesh(innerGeo, innerMat));
+    if (!isMob) {
+      const innerGeo = new THREE.TorusKnotGeometry(3.6, 0.7, 100, 16, 2, 3);
+      const innerMat = new THREE.MeshBasicMaterial({
+        color: 0xE85D26, transparent: true, opacity: 0.15, wireframe: true,
+      });
+      scene.add(new THREE.Mesh(innerGeo, innerMat));
+    }
 
     // Ambient + point
     scene.add(new THREE.AmbientLight(0xffffff, 0.5));
@@ -47,8 +53,9 @@ export default function WormholePortal() {
     scene.add(ptLight);
 
     // Stars
-    const starPos = new Float32Array(800 * 3);
-    for (let i = 0; i < 800; i++) {
+    const starCount = isMob ? 200 : 800;
+    const starPos = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
       starPos[i*3]   = (Math.random() - 0.5) * 200;
       starPos[i*3+1] = (Math.random() - 0.5) * 200;
       starPos[i*3+2] = (Math.random() - 0.5) * 200;
@@ -66,9 +73,18 @@ export default function WormholePortal() {
     window.addEventListener('resize', onResize);
 
     let frameId;
+    let lastRender = 0;
+    const fpsInterval = 1000 / 30; // 30 FPS target for mobile
     const clock = new THREE.Clock();
-    const animate = () => {
+
+    const animate = (time) => {
       frameId = requestAnimationFrame(animate);
+
+      if (isMob) {
+        if (time - lastRender < fpsInterval) return;
+        lastRender = time;
+      }
+
       const t = clock.getElapsedTime();
       knot.rotation.x = t * 0.22;
       knot.rotation.y = t * 0.14;

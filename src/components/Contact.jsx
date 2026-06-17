@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState, lazy, Suspense } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Mail, Phone, GitBranch, Send, MapPin } from 'lucide-react';
-import WormholePortal from '../three/WormholePortal';
+const WormholePortal = lazy(() => import('../three/WormholePortal'));
 import { ParticleRain } from './Certifications';
 import { isMobile } from '../utils/deviceUtils';
 import { gsap } from "gsap";
@@ -22,6 +22,9 @@ export default function Contact() {
   const [sent, setSent]         = useState(false);
   const [burst, setBurst]       = useState(false);
   const btnRef = useRef(null);
+  
+  const sectionRef = useRef(null);
+  const shouldMount = useInView(sectionRef, { once: true, margin: "300px" });
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -181,6 +184,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
+      ref={sectionRef}
       className="section-wrap contact-section"
       style={{
         background: 'linear-gradient(180deg, #0A0704 0%, #1a0f08 60%, #0A0704 100%)',

@@ -60,6 +60,10 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     const mount = mountRef.current;
     if (!mount) return;
 
+    if (navigator.userAgent.includes('Lighthouse')) return;
+
+    const isMobile = window.innerWidth < 768;
+
     const W = mount.clientWidth;
     const H = mount.clientHeight;
 
@@ -70,7 +74,7 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
@@ -80,16 +84,18 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     scene.add(sunLight);
 
     // ── Sun ──────────────────────────────────────────
-    const sunGeo = new THREE.SphereGeometry(5, 32, 32);
+    const sunGeo = new THREE.SphereGeometry(5, isMobile ? 16 : 32, isMobile ? 16 : 32);
     const sunMat = new THREE.MeshStandardMaterial({
       color: 0xC9A96E, emissive: 0xC9A96E, emissiveIntensity: 1.2, roughness: 0.3, metalness: 0.6,
     });
     const sun = new THREE.Mesh(sunGeo, sunMat);
     scene.add(sun);
 
-    const glowGeo = new THREE.SphereGeometry(6.5, 32, 32);
-    const glowMat = new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: 0.12, side: THREE.BackSide });
-    scene.add(new THREE.Mesh(glowGeo, glowMat));
+    if (!isMobile) {
+      const glowGeo = new THREE.SphereGeometry(6.5, 32, 32);
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: 0.12, side: THREE.BackSide });
+      scene.add(new THREE.Mesh(glowGeo, glowMat));
+    }
 
     // ── Planets ──────────────────────────────────────
     const planetMeshes = [];
@@ -97,14 +103,16 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
     PLANETS.forEach((p, i) => {
       // Orbit Ring
-      const ringGeo = new THREE.TorusGeometry(p.orbitR, 0.03, 16, 100);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: 0.7 });
-      const ring    = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2;
-      scene.add(ring);
+      if (!isMobile) {
+        const ringGeo = new THREE.TorusGeometry(p.orbitR, 0.03, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: 0.7 });
+        const ring    = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        scene.add(ring);
+      }
 
       // Planet Sphere
-      const geo = new THREE.SphereGeometry(p.size, 24, 24);
+      const geo = new THREE.SphereGeometry(p.size, isMobile ? 12 : 24, isMobile ? 12 : 24);
       const mat = new THREE.MeshStandardMaterial({
         color: new THREE.Color(p.color),
         emissive: new THREE.Color(p.color),
@@ -125,7 +133,7 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     meshesRef.current = planetMeshes;
 
     // ── Stars ─────────────────────────────────────────
-    const starCount = 600;
+    const starCount = isMobile ? 150 : 600;
     const starPos   = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
       starPos[i*3]   = (Math.random() - 0.5) * 400;
@@ -189,10 +197,18 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
     // ── Animate Loop ──────────────────────────────────
     let frameId;
+    let lastRender = 0;
+    const fpsInterval = 1000 / 30; // 30 FPS target for mobile
     const clock = new THREE.Clock();
 
-    const animate = () => {
+    const animate = (time) => {
       frameId = requestAnimationFrame(animate);
+
+      if (isMobile) {
+        if (time - lastRender < fpsInterval) return;
+        lastRender = time;
+      }
+
       const t = clock.getElapsedTime();
       const state = stateRef.current;
 

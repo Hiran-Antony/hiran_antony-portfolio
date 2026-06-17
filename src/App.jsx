@@ -84,20 +84,30 @@ export default function App() {
   // Lenis smooth scroll
   useEffect(() => {
     if (!introComplete) return;
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-    lenisRef.current = lenis;
+    let lenis;
+    const initLenis = () => {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+      lenisRef.current = lenis;
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add(time => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    };
 
-    // Connect Lenis to GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add(time => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+    if (document.readyState === 'complete') {
+      initLenis();
+    } else {
+      window.addEventListener('load', initLenis);
+    }
 
     return () => {
-      lenis.destroy();
-      gsap.ticker.remove(time => lenis.raf(time * 1000));
+      if (lenis) {
+        lenis.destroy();
+        gsap.ticker.remove(time => lenis.raf(time * 1000));
+      }
+      window.removeEventListener('load', initLenis);
     };
   }, [introComplete]);
 

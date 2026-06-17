@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import SolarSystem from '../three/SolarSystem';
+const SolarSystem = lazy(() => import('../three/SolarSystem'));
 import nebulaBg from '../assets/skills-nebula.jpeg';
 
 const SKILL_CATEGORIES = [
@@ -13,7 +13,9 @@ const SKILL_CATEGORIES = [
 
 export default function Skills() {
   const containerRef = useRef(null);
+  const mountRef = useRef(null);
   const isInView = useInView(containerRef, { amount: 0.2 }); // Trigger when 20% visible
+  const shouldMount = useInView(mountRef, { once: true, margin: "300px" });
 
   const [focusedIdx, setFocusedIdx] = useState(0);
   const [isFocused, setIsFocused] = useState(false); // start false
@@ -61,13 +63,19 @@ export default function Skills() {
         backgroundImage: `url(${nebulaBg})`
       }}
     >
+      <div ref={mountRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
+
       {/* 3D Solar System */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-        <SolarSystem 
-          focusedIdx={focusedIdx} 
-          isFocused={isFocused} 
-          onManualSelect={handleManualSelect} 
-        />
+        {shouldMount && (
+          <Suspense fallback={<div style={{ width: '100%', height: '100%' }} />}>
+            <SolarSystem 
+              focusedIdx={focusedIdx} 
+              isFocused={isFocused} 
+              onManualSelect={handleManualSelect} 
+            />
+          </Suspense>
+        )}
       </div>
 
       {/* Overlay content */}

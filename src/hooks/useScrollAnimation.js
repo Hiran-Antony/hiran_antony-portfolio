@@ -6,27 +6,30 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function useScrollAnimation() {
   useEffect(() => {
-    // Generic fade-up for all .reveal elements
-    const elements = document.querySelectorAll('.reveal');
-    elements.forEach((el) => {
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 88%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
-    });
+    // Defer GSAP initialization to avoid blocking the main thread during hydration
+    const timer = setTimeout(() => {
+      const elements = document.querySelectorAll('.reveal');
+      elements.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      });
+    }, 100);
 
     return () => {
+      clearTimeout(timer);
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);

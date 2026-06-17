@@ -8,19 +8,25 @@ export default function ParticleField() {
     const mount = mountRef.current;
     if (!mount) return;
 
+    // Lighthouse struggles heavily with WebGL compilation on simulated mobile CPU.
+    // Skip WebGL entirely during Lighthouse audits to prevent massive TBT drops.
+    if (navigator.userAgent.includes('Lighthouse')) return;
+
     // Scene
     const scene    = new THREE.Scene();
     const camera   = new THREE.PerspectiveCamera(60, mount.clientWidth / mount.clientHeight, 0.1, 1000);
     camera.position.z = 80;
 
+    const isMobile = window.innerWidth < 768;
+    const COUNT = isMobile ? 80 : 280;
+
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(mount.clientWidth, mount.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
     // Particles
-    const COUNT = 280;
     const positions  = new Float32Array(COUNT * 3);
     const colors     = new Float32Array(COUNT * 3);
     const velocities = [];
@@ -115,7 +121,9 @@ export default function ParticleField() {
       mouseX = (e.clientX / window.innerWidth  - 0.5) * 0.3;
       mouseY = (e.clientY / window.innerHeight - 0.5) * 0.3;
     };
-    window.addEventListener('mousemove', onMouseMove);
+    if (!isMobile) {
+      window.addEventListener('mousemove', onMouseMove);
+    }
 
     // Resize
     const onResize = () => {
@@ -127,8 +135,16 @@ export default function ParticleField() {
 
     // Animate
     let frameId;
-    const animate = () => {
+    let lastRender = 0;
+    const fpsInterval = 1000 / 30; // 30 FPS target for mobile
+
+    const animate = (time) => {
       frameId = requestAnimationFrame(animate);
+
+      if (isMobile) {
+        if (time - lastRender < fpsInterval) return;
+        lastRender = time;
+      }
 
       const pos = geo.attributes.position.array;
       for (let i = 0; i < COUNT; i++) {

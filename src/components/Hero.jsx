@@ -1,6 +1,7 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, lazy, Suspense } from 'react';
 import { gsap } from 'gsap';
-import ParticleField from '../three/ParticleField';
+import { useInView } from 'framer-motion';
+const ParticleField = lazy(() => import('../three/ParticleField'));
 import { Mail, ArrowDown, Eye } from 'lucide-react';
 import avatarImg from '../assets/avatar.webp';
 
@@ -14,6 +15,9 @@ export default function Hero({ introComplete }) {
   const ctaRef       = useRef(null);
   const arrowRef     = useRef(null);
   const [roleIdx, setRoleIdx] = useState(0);
+
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "200px" });
 
   // Initial Entry Animations
   useEffect(() => {
@@ -68,6 +72,7 @@ export default function Hero({ introComplete }) {
   return (
     <section
       id="hero"
+      ref={sectionRef}
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -77,7 +82,12 @@ export default function Hero({ introComplete }) {
         overflow: 'hidden',
       }}
     >
-      <ParticleField />
+      {/* 3D Background */}
+      {isInView && introComplete && (
+        <Suspense fallback={<div style={{position: 'absolute', inset: 0, zIndex: 0, background: 'transparent'}} />}>
+          <ParticleField />
+        </Suspense>
+      )}
 
       {/* Content */}
       <div
@@ -184,7 +194,14 @@ export default function Hero({ introComplete }) {
         </div>
 
         <div className="hero-image-wrapper">
-          <img src={avatarImg} alt="Hiran Antony R" className="hero-image-img" />
+            <img 
+              src={avatarImg} 
+              alt="Hiran Antony R" 
+              className="hero-image-img"
+              loading="eager"
+              width="500"
+              height="500"
+            />
         </div>
       </div>
 
