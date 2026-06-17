@@ -32,10 +32,11 @@ export default function CinematicIntro({ onComplete }) {
 
     // When video ends → start transition out
     video.addEventListener("ended", handleTransitionOut);
+    video.addEventListener("error", handleTransitionOut);
 
-    // Failsafe: force transition after 4 seconds
-    // in case video event doesn't fire
-    const failsafe = setTimeout(handleTransitionOut, 4000);
+    // Failsafe: force transition after 10 seconds
+    // in case video event doesn't fire or connection is too slow
+    const failsafe = setTimeout(handleTransitionOut, 10000);
 
     function handleTransitionOut() {
       clearTimeout(failsafe);
@@ -55,6 +56,7 @@ export default function CinematicIntro({ onComplete }) {
     return () => {
       clearTimeout(failsafe);
       video.removeEventListener("ended", handleTransitionOut);
+      video.removeEventListener("error", handleTransitionOut);
       
       // Restore scroll
       document.body.style.overflow = "";
