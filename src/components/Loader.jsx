@@ -79,9 +79,9 @@ export default function Loader({ onComplete }) {
         <h2 style={{
           fontFamily: 'var(--font-display)',
           color: 'var(--espresso)',
-          fontWeight: 600,
+          fontWeight: 500,
           fontSize: '1.5rem',
-          letterSpacing: '0.05em',
+          letterSpacing: '0.15em',
           margin: 0
         }}>
           Portfolio
