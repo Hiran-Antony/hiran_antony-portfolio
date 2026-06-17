@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Maximize2 } from 'lucide-react';
+import { isMobile } from '../utils/deviceUtils';
 
 import certCloudLeader from '../assets/certificates/cert-google-cloud-leader.png';
 import certRedHat from '../assets/certificates/cert-redhat-sysadmin.png';
@@ -79,7 +80,7 @@ function CertCard({ cert, index, setLightboxImg }) {
 
       {/* Image Preview */}
       <div className="cert-image-wrap" onClick={() => setLightboxImg(cert.image)}>
-        <img src={cert.image} alt={cert.title} />
+        <img src={cert.image} loading="lazy" alt={cert.title} />
         <div className="cert-image-overlay">
           <div style={{ background: 'rgba(10,7,4,0.7)', padding: '12px', borderRadius: '50%', display: 'flex' }}>
             <Maximize2 size={20} color="#FAF7F2" />
@@ -174,7 +175,7 @@ export default function Certifications() {
       background: 'linear-gradient(180deg, #0A0704 0%, #1a0f08 50%, #0A0704 100%)',
       position: 'relative', overflow: 'hidden',
     }}>
-      <ParticleRain />
+      {!isMobile() && <ParticleRain count={window.innerWidth < 1024 ? 20 : 50} />}
 
       <div className="container" style={{ position:'relative', zIndex:2 }}>
         <div className="cert-section-header">
@@ -246,6 +247,11 @@ export default function Certifications() {
       </AnimatePresence>
 
       <style>{`
+        @media (max-width: 768px) {
+          .certifications-section {
+            background: radial-gradient(ellipse at top, #C9A96E11 0%, transparent 60%), #0D0804 !important;
+          }
+        }
         .certifications-section {
           padding: 100px 5%;
           min-height: 100vh;

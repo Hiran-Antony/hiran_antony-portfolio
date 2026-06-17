@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
+import { isMobile } from '../utils/deviceUtils';
 
 export default function WormholePortal() {
   const mountRef = useRef(null);
@@ -17,7 +18,7 @@ export default function WormholePortal() {
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1 : 2));
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
@@ -76,9 +77,19 @@ export default function WormholePortal() {
     };
     animate();
 
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(frameId);
+      } else {
+        animate();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', onResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       renderer.dispose();
       if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
     };

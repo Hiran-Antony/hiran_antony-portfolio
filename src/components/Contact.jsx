@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, GitBranch, Send, MapPin } from 'lucide-react';
 import WormholePortal from '../three/WormholePortal';
 import { ParticleRain } from './Certifications';
+import { isMobile } from '../utils/deviceUtils';
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -54,15 +55,18 @@ export default function Contact() {
   };
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const mobile = isMobile();
+    if (mobile) {
+      gsap.globalTimeline.timeScale(1.5);
+    }
 
     // LEFT SIDE — staggered fade in from left
     gsap.fromTo(
       ".contact-left-item",
       {
         opacity: 0,
-        x: isMobile ? 0 : -40,
-        y: isMobile ? 20 : 0,
+        x: mobile ? 0 : -40,
+        y: mobile ? 20 : 0,
       },
       {
         opacity: 1,
@@ -75,7 +79,7 @@ export default function Contact() {
           trigger: ".contact-left",
           start: "top 80%",
           end: "top 30%",
-          scrub: 1.5,
+          scrub: mobile ? 0.5 : 1.5,
           toggleActions: "play reverse play reverse"
         }
       }
@@ -86,7 +90,7 @@ export default function Contact() {
       ".contact-form-card",
       {
         opacity: 0,
-        x: isMobile ? 0 : 40,
+        x: mobile ? 0 : 40,
       },
       {
         opacity: 1,
@@ -97,7 +101,7 @@ export default function Contact() {
           trigger: ".contact-form-card",
           start: "top 80%",
           end: "top 25%",
-          scrub: 1.5,
+          scrub: mobile ? 0.5 : 1.5,
           toggleActions: "play reverse play reverse"
         }
       }
@@ -119,7 +123,7 @@ export default function Contact() {
           trigger: ".contact-form-card",
           start: "top 70%",
           end: "top 15%",
-          scrub: 1.2,
+          scrub: mobile ? 0.5 : 1.2,
           toggleActions: "play reverse play reverse"
         }
       }
@@ -141,7 +145,7 @@ export default function Contact() {
           trigger: ".contact-section",
           start: "top 75%",
           end: "top 40%",
-          scrub: 1,
+          scrub: mobile ? 0.5 : 1,
           toggleActions: "play reverse play reverse"
         }
       }
@@ -162,7 +166,7 @@ export default function Contact() {
           trigger: ".contact-social-icons",
           start: "top 90%",
           end: "top 60%",
-          scrub: 1,
+          scrub: mobile ? 0.5 : 1,
           toggleActions: "play reverse play reverse"
         }
       }
@@ -186,10 +190,14 @@ export default function Contact() {
       }}
     >
       {/* Wormhole portal background */}
-      <WormholePortal />
+      {!isMobile() ? (
+        <WormholePortal />
+      ) : (
+        <div className="mobile-contact-bg" />
+      )}
 
       {/* Gold particle rain */}
-      <ParticleRain count={60} />
+      {!isMobile() && <ParticleRain count={60} />}
 
       {/* Dark overlay so text is readable */}
       <div style={{
