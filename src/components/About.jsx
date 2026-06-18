@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Users, Award, Cpu, Shield, Phone, Mail, GraduationCap, MapPin } from 'lucide-react';
+import hiranImg from '../assets/hiran.jpeg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -106,6 +107,19 @@ export default function About() {
                 boxShadow: 'var(--shadow-espresso)',
               }}
             >
+              <img
+                src={hiranImg}
+                alt="Hiran Antony R"
+                loading="lazy"
+                width="600"
+                height="800"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
               {/* Shimmer sweep */}
               <div className="shimmer-overlay" />
             </div>

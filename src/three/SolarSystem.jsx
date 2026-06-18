@@ -103,13 +103,11 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
     PLANETS.forEach((p, i) => {
       // Orbit Ring
-      if (!isMobile) {
-        const ringGeo = new THREE.TorusGeometry(p.orbitR, 0.03, 16, 100);
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: 0.7 });
-        const ring    = new THREE.Mesh(ringGeo, ringMat);
-        ring.rotation.x = Math.PI / 2;
-        scene.add(ring);
-      }
+      const ringGeo = new THREE.TorusGeometry(p.orbitR, 0.03, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: 0.7 });
+      const ring    = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      scene.add(ring);
 
       // Planet Sphere
       const geo = new THREE.SphereGeometry(p.size, isMobile ? 12 : 24, isMobile ? 12 : 24);

@@ -27,7 +27,8 @@ export default function WormholePortal() {
     const isMob = isMobile();
 
     // Torus knot — wormhole
-    const geo = new THREE.TorusKnotGeometry(4, 1.1, isMob ? 80 : 200, isMob ? 10 : 20, 2, 3);
+    // Drastically reduce segments on mobile to prevent wireframe lag
+    const geo = new THREE.TorusKnotGeometry(4, 1.1, isMob ? 40 : 200, isMob ? 6 : 20, 2, 3);
     const mat = new THREE.MeshStandardMaterial({
       color: 0xC9A96E,
       emissive: 0xC9A96E,
@@ -53,7 +54,7 @@ export default function WormholePortal() {
     scene.add(ptLight);
 
     // Stars
-    const starCount = isMob ? 200 : 800;
+    const starCount = isMob ? 60 : 800; // Significantly fewer stars on mobile
     const starPos = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
       starPos[i*3]   = (Math.random() - 0.5) * 200;
