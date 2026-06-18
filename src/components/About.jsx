@@ -94,6 +94,22 @@ export default function About() {
         >
           {/* LEFT — Photo + shimmer */}
           <div className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div
+              ref={photoRef}
+              className="photo-shimmer"
+              style={{
+                position: 'relative',
+                borderRadius: 'var(--radius-xl)',
+                overflow: 'hidden',
+                aspectRatio: '4/5',
+                background: 'linear-gradient(135deg, var(--espresso) 0%, var(--espresso-mid) 50%, var(--espresso) 100%)',
+                boxShadow: 'var(--shadow-espresso)',
+              }}
+            >
+              {/* Shimmer sweep */}
+              <div className="shimmer-overlay" />
+            </div>
+
             {/* Contact quick-info */}
             <div className="glass" style={{ padding: '1.25rem 1.5rem' }}>
               {[
