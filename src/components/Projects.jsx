@@ -41,6 +41,19 @@ const PROJECTS = [
     accent: '#E85D26',
     special: true, // Gets the runway light sweep
   },
+  {
+    id: 'n1729academy',
+    title: 'N-1729 Academy',
+    subtitle: 'Client Project — Tuition Center',
+    description: 'Designed and developed a professional website for a tuition center. Focuses on an engaging user experience with smooth scroll animations and modern web aesthetics.',
+    stack: ['HTML5', 'CSS3', 'JavaScript', 'GSAP', 'Vercel'],
+    live: null,
+    github: null,
+    badge: 'In Progress',
+    badgeColor: '#E85D26',
+    accent: '#C9A96E',
+    special: true,
+  },
 ];
 
 export default function Projects() {
