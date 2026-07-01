@@ -18,6 +18,7 @@ export default function useScrollAnimation() {
             y: 0,
             duration: 0.9,
             ease: 'power3.out',
+            force3D: true,
             scrollTrigger: {
               trigger: el,
               start: 'top 88%',

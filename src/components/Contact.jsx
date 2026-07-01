@@ -10,7 +10,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const SOCIALS = [
-  { icon: Mail,     label: 'Email',    href: 'mailto:hiranantony@karunya.edu.in', value: 'hiranantony@karunya.edu.in' },
+  { icon: Mail,     label: 'Email',    href: 'mailto:rhiranantony15@gmail.com', value: 'rhiranantony15@gmail.com' },
   { icon: Phone,    label: 'Phone',    href: 'tel:+919360276068',                 value: '+91 9360276068' },
   { icon: GitBranch, label: 'GitHub',   href: 'https://github.com/Hiran-Antony',   value: 'github.com/Hiran-Antony' },
   { icon: MapPin,   label: 'Location', href: null,                                value: 'Coimbatore, India' },

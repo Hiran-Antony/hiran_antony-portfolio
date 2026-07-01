@@ -48,15 +48,7 @@ const CERTS = [
 ];
 
 function CertCard({ cert, index, setLightboxImg }) {
-  let pillBg, pillColor, pillBorder = 'none';
-  if (cert.type === 'Certification') {
-    pillBg = '#C9A96E'; pillColor = '#3D2B1F';
-  } else if (cert.type === 'Attendance') {
-    pillBg = '#E85D26'; pillColor = '#FAF7F2';
-  } else {
-    pillBg = '#3D2B1F'; pillColor = '#C9A96E';
-    pillBorder = '0.5px solid #C9A96E44';
-  }
+  const typeClass = cert.type.toLowerCase();
 
   return (
     <motion.div
@@ -64,7 +56,7 @@ function CertCard({ cert, index, setLightboxImg }) {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ type: 'spring', stiffness: 180, damping: 18, delay: index * 0.1 }}
-      className={`cert-card ${cert.featured ? 'featured-cert' : ''}`}
+      className={`cert-card ${cert.featured ? 'featured' : ''}`}
     >
       {cert.featured && (
         <div style={{
@@ -90,13 +82,11 @@ function CertCard({ cert, index, setLightboxImg }) {
 
       {/* Text details */}
       <div className="cert-text-wrap">
-        <span className="cert-type-pill" style={{
-          background: pillBg, color: pillColor, border: pillBorder
-        }}>
+        <span className={`cert-type-pill ${typeClass}`}>
           {cert.type}
         </span>
         <h3 className="cert-title">{cert.title}</h3>
-        <p className="cert-subtitle" style={{ color: 'rgba(232,213,176,0.6)', fontWeight: 600, fontSize: '13px' }}>
+        <p className="cert-issuer">
           {cert.issuer}
         </p>
         
@@ -181,7 +171,7 @@ export default function Certifications() {
         <div className="cert-section-header">
           <p className="section-label">06 — CERTIFICATIONS</p>
           <h2 className="section-title">
-            Earned <span style={{color:"#E85D26"}}>Badges</span>
+            Earned <span className="text-gradient">Badges</span>
           </h2>
           <p className="section-subtitle">
             Verified credentials from global tech leaders
@@ -198,49 +188,35 @@ export default function Certifications() {
       <AnimatePresence>
         {lightboxImg && (
           <motion.div
+            className="cert-lightbox-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            style={{
-              position: "fixed", inset: 0, 
-              background: "rgba(0,0,0,0.92)",
-              zIndex: 10000, display: "flex",
-              alignItems: "center", 
-              justifyContent: "center",
-              cursor: "pointer",
-              backdropFilter: "blur(8px)"
-            }}
             onClick={() => setLightboxImg(null)}
           >
-            <motion.img 
+            <motion.div 
+              className="cert-lightbox-content"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300, delay: 0.1 }}
-              src={lightboxImg}
-              style={{
-                maxWidth: "90vw", 
-                maxHeight: "90vh",
-                borderRadius: "12px",
-                objectFit: "contain",
-                border: "0.5px solid #C9A96E44",
-                boxShadow: "0 24px 60px rgba(0,0,0,0.6)"
-              }}
               onClick={e => e.stopPropagation()}
-            />
+            >
+              <img 
+                src={lightboxImg}
+                style={{
+                  maxWidth: "90vw", 
+                  maxHeight: "90vh",
+                  borderRadius: "12px",
+                  objectFit: "contain",
+                  display: "block"
+                }}
+              />
+            </motion.div>
             <button
+              className="cert-lightbox-close"
               onClick={() => setLightboxImg(null)}
-              style={{
-                position: "absolute", top: "24px", right: "24px",
-                background: "#C9A96E22", border: "0.5px solid #C9A96E",
-                color: "#C9A96E", borderRadius: "50%",
-                width: "40px", height: "40px",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", transition: "all 0.2s"
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = '#C9A96E44'}
-              onMouseLeave={e => e.currentTarget.style.background = '#C9A96E22'}
             >✕</button>
           </motion.div>
         )}
@@ -296,64 +272,192 @@ export default function Certifications() {
         }
         @media (max-width: 768px) {
           .certs-grid { grid-template-columns: 1fr; }
-          .featured-cert .cert-image-wrap,
-          .cert-card:not(.featured-cert) .cert-image-wrap {
+          .cert-card.featured .cert-image-wrap,
+          .cert-card:not(.featured) .cert-image-wrap {
             min-height: auto !important;
           }
         }
 
+        /* ═══════════════════════════════════════
+           🃏 REGULAR CARDS
+           ═══════════════════════════════════════ */
         .cert-card {
-          background: #2A1A0E;
-          border-radius: 16px;
-          padding: 24px;
-          border: 0.5px solid #C9A96E22;
-          transition: transform 0.3s ease, border-color 0.3s ease;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          
+          border: 1px solid rgba(201, 169, 110, 0.15);
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-left: 1px solid rgba(255, 255, 255, 0.08);
+          
+          box-shadow:
+            0 4px 24px rgba(0, 0, 0, 0.35),
+            0 1px 0 rgba(255, 255, 255, 0.05) inset,
+            0 0 0 1px rgba(201, 169, 110, 0.08);
+          
+          border-radius: 20px;
+          padding: 20px;
+          position: relative;
+          overflow: hidden;
+          
+          transition: 
+            transform 0.3s ease,
+            border-color 0.3s ease,
+            box-shadow 0.3s ease,
+            background 0.3s ease;
+            
           display: flex;
           flex-direction: column;
         }
+
         .cert-card:hover {
+          background: rgba(255, 255, 255, 0.06);
+          border-color: rgba(201, 169, 110, 0.35);
+          box-shadow:
+            0 8px 40px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(201, 169, 110, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 0 30px rgba(201, 169, 110, 0.08);
           transform: translateY(-6px);
-          border-color: #C9A96E55;
         }
 
-        .cert-card.featured-cert {
+        .cert-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 20%;
+          right: 20%;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.15),
+            transparent
+          );
+        }
+
+        /* ═══════════════════════════════════════
+           🃏 FEATURED CARD
+           ═══════════════════════════════════════ */
+        .cert-card.featured {
           grid-column: 1 / -1;
           display: grid;
           grid-template-columns: 1.2fr 1fr;
           gap: 48px;
           align-items: center;
-          padding: 40px;
           margin-bottom: 32px;
-          border-radius: 20px;
-          background: #2A1A0E;
-          border: 0.5px solid #C9A96E55;
-          box-shadow: 0 0 40px #C9A96E12;
+          
+          background: rgba(255, 255, 255, 0.04);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          
+          border: 1px solid rgba(201, 169, 110, 0.25);
+          border-top: 1px solid rgba(201, 169, 110, 0.4);
+          border-left: 1px solid rgba(201, 169, 110, 0.4);
+          
+          box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(201, 169, 110, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            inset 0 0 40px rgba(201, 169, 110, 0.03);
+          
+          border-radius: 24px;
+          padding: 40px;
+          position: relative;
+          overflow: hidden;
         }
+
+        .cert-card.featured::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 10%;
+          right: 10%;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(201, 169, 110, 0.6) 30%,
+            rgba(232, 93, 38, 0.4) 50%,
+            rgba(201, 169, 110, 0.6) 70%,
+            transparent
+          );
+        }
+
+        .cert-card.featured::after {
+          content: '';
+          position: absolute;
+          top: -50px;
+          right: -50px;
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(201, 169, 110, 0.08) 0%,
+            transparent 70%
+          );
+          pointer-events: none;
+        }
+
         @media (max-width: 1024px) {
-          .cert-card.featured-cert {
+          .cert-card.featured {
             grid-template-columns: 1fr;
             padding: 24px;
             gap: 24px;
           }
         }
 
-        /* Featured card image */
-        .featured-cert .cert-image-wrap {
+        /* ═══════════════════════════════════════
+           🖼️ CERTIFICATE IMAGE AREA
+           ═══════════════════════════════════════ */
+        .cert-card.featured .cert-image-wrap {
           width: 100%;
           height: auto;
           min-height: 320px;
+          display: flex;
+          align-items: flex-start;
+          cursor: pointer;
+        }
+        .cert-card:not(.featured) .cert-image-wrap {
+          width: 100%;
+          height: auto;
+          min-height: 130px;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: flex-start;
+          cursor: pointer;
+        }
+        
+        .cert-image-wrap {
           border-radius: 12px;
           overflow: hidden;
-          background: #FAF7F2;
-          border: 0.5px solid #C9A96E22;
-          display: flex;
-          align-items: flex-start;
-          box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+          
+          /* Glass frame around image */
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          
           position: relative;
-          cursor: pointer;
         }
 
-        .featured-cert .cert-image-wrap img {
+        .cert-image-wrap::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 40%;
+          background: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05),
+            transparent
+          );
+          pointer-events: none;
+        }
+
+        .cert-image-wrap img {
           width: 100%;
           height: auto;
           object-fit: contain;
@@ -361,37 +465,10 @@ export default function Certifications() {
           display: block;
           transition: transform 0.4s ease;
         }
-
-        /* Regular cards image */
-        .cert-card:not(.featured-cert) .cert-image-wrap {
-          width: 100%;
-          height: auto;
-          min-height: 200px;
-          border-radius: 10px;
-          overflow: hidden;
-          background: #FAF7F2;
-          border: 0.5px solid #C9A96E22;
-          box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
-          position: relative;
-          cursor: pointer;
-          margin-bottom: 16px;
-          display: flex;
-          align-items: flex-start;
-        }
-
-        .cert-card:not(.featured-cert) .cert-image-wrap img {
-          width: 100%;
-          height: auto;
-          object-fit: contain;
-          object-position: top;
-          display: block;
-          transition: transform 0.4s ease;
-        }
-
         .cert-card:hover .cert-image-wrap img {
           transform: scale(1.04);
         }
-        
+
         .cert-image-overlay {
           position: absolute;
           inset: 0;
@@ -401,6 +478,7 @@ export default function Certifications() {
           justify-content: center;
           opacity: 0;
           transition: opacity 0.3s;
+          z-index: 5;
         }
         .cert-image-wrap:hover .cert-image-overlay {
           opacity: 1;
@@ -412,87 +490,194 @@ export default function Certifications() {
           flex: 1;
         }
 
+        /* ═══════════════════════════════════════
+           💊 TYPE PILLS — GLASS VERSION
+           ═══════════════════════════════════════ */
         .cert-type-pill {
-          display: inline-block;
-          align-self: flex-start;
-          padding: 4px 12px;
+          padding: 4px 14px;
           border-radius: 20px;
           font-size: 10px;
           font-weight: 600;
-          letter-spacing: 0.08em;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
+          font-family: 'JetBrains Mono', monospace;
+          display: inline-block;
+          align-self: flex-start;
           margin-bottom: 16px;
         }
+        .cert-type-pill.certification {
+          background: rgba(201, 169, 110, 0.15);
+          border: 1px solid rgba(201, 169, 110, 0.4);
+          color: #C9A96E;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+        .cert-type-pill.attendance {
+          background: rgba(232, 93, 38, 0.15);
+          border: 1px solid rgba(232, 93, 38, 0.4);
+          color: #E85D26;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
+        .cert-type-pill.participation {
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: rgba(250, 247, 242, 0.8);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+        }
 
+        /* ═══════════════════════════════════════
+           📝 TEXT COLORS INSIDE GLASS CARDS
+           ═══════════════════════════════════════ */
         .cert-title {
-          font-family: var(--font-display);
+          color: #FAF7F2;
           font-size: 18px;
           font-weight: 700;
-          color: #FAF7F2;
+          text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+          font-family: var(--font-display);
           margin: 16px 0 6px;
           line-height: 1.3;
         }
-
+        .cert-issuer {
+          color: rgba(201, 169, 110, 0.9);
+          font-size: 13px;
+          font-weight: 500;
+          margin-bottom: 8px;
+        }
         .cert-subtitle {
-          font-family: var(--font-mono);
+          color: rgba(250, 247, 242, 0.5);
           font-size: 12px;
-          color: #C9A96E99;
+          font-family: 'JetBrains Mono', monospace;
           margin-bottom: 8px;
           line-height: 1.5;
         }
-
         .cert-date-wrap {
           margin-bottom: 16px;
         }
-
         .cert-date {
-          font-family: var(--font-mono);
+          color: rgba(250, 247, 242, 0.6);
           font-size: 12px;
-          color: #FAF7F2aa;
+          font-family: var(--font-mono);
         }
 
         .cert-buttons {
           display: flex;
           gap: 10px;
-          margin-top: 20px;
+          margin-top: 14px;
           flex-wrap: wrap;
         }
 
+        /* ═══════════════════════════════════════
+           🔘 BUTTONS — GLASS VERSION
+           ═══════════════════════════════════════ */
         .btn-view {
-          font-family: var(--font-body);
-          background: #3D2B1F;
+          background: rgba(201, 169, 110, 0.12);
+          border: 1px solid rgba(201, 169, 110, 0.3);
           color: #C9A96E;
-          border: 0.5px solid #C9A96E55;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           padding: 8px 18px;
           border-radius: 40px;
           font-size: 12px;
-          font-weight: 600;
+          font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease;
+          font-family: var(--font-body);
         }
         .btn-view:hover {
-          background: #C9A96E;
-          color: #3D2B1F;
+          background: rgba(201, 169, 110, 0.25);
+          border-color: rgba(201, 169, 110, 0.6);
+          box-shadow: 0 0 16px rgba(201, 169, 110, 0.2);
         }
 
         .btn-verify {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          font-family: var(--font-body);
-          background: transparent;
-          color: #C9A96E;
-          border: 0.5px solid #C9A96E55;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: rgba(250, 247, 242, 0.7);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           padding: 8px 18px;
           border-radius: 40px;
           font-size: 12px;
-          font-weight: 600;
           cursor: pointer;
           transition: all 0.2s ease;
+          font-family: var(--font-body);
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
           text-decoration: none;
         }
         .btn-verify:hover {
-          border-color: #C9A96E;
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(255, 255, 255, 0.25);
+          color: #FAF7F2;
+        }
+
+        /* ═══════════════════════════════════════
+           ✨ LIGHTBOX — GLASS VERSION
+           ═══════════════════════════════════════ */
+        .cert-lightbox-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(13, 8, 4, 0.85);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          z-index: 10000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+
+        .cert-lightbox-content {
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(201, 169, 110, 0.25);
+          border-radius: 20px;
+          padding: 8px;
+          box-shadow:
+            0 20px 60px rgba(0,0,0,0.6),
+            inset 0 1px 0 rgba(255,255,255,0.1);
+          cursor: default;
+        }
+
+        .cert-lightbox-close {
+          position: absolute;
+          top: 24px;
+          right: 24px;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.15);
+          color: #FAF7F2;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          cursor: pointer;
+          backdrop-filter: blur(8px);
+          font-size: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+        }
+        .cert-lightbox-close:hover {
+          background: rgba(201,169,110,0.2);
+          border-color: rgba(201,169,110,0.4);
+        }
+
+        /* ═══════════════════════════════════════
+           📱 MOBILE GLASS OPTIMIZATION
+           ═══════════════════════════════════════ */
+        @media (max-width: 768px) {
+          .cert-card {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+          }
+          .cert-card.featured {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+          }
         }
       `}</style>
     </section>

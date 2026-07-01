@@ -19,13 +19,23 @@ export default function Navbar(props) {
   const underlineRef = useRef(null);
 
 
+  const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
-    // Scroll-based transparency
-    ScrollTrigger.create({
-      start: 80,
-      onEnter:     () => navRef.current?.classList.add('nav-scrolled'),
-      onLeaveBack: () => navRef.current?.classList.remove('nav-scrolled'),
-    });
+    // Native scroll listener is much more reliable for navbars on page refresh
+    // especially when dealing with intro screens that lock the scroll position.
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 80);
+    };
+
+    // Check immediately on mount
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
 
     // Active section detection
     const sections = document.querySelectorAll('section[id]');
@@ -53,7 +63,7 @@ export default function Navbar(props) {
 
   return (
     <>
-      <nav ref={navRef} className="navbar">
+      <nav ref={navRef} className={`navbar ${scrolled ? 'nav-scrolled' : ''}`}>
         {/* Logo */}
         <a href="#hero" onClick={e => handleNavClick(e, '#hero')} className="nav-logo" aria-label="Home">
           <span>HA</span>
@@ -95,7 +105,7 @@ export default function Navbar(props) {
             </li>
           ))}
           <li>
-            <a href="mailto:hiranantony@karunya.edu.in" className="drawer-cta">Hire Me</a>
+            <a href="mailto:rhiranantony15@gmail.com" className="drawer-cta">Hire Me</a>
           </li>
         </ul>
       </div>
@@ -112,11 +122,18 @@ export default function Navbar(props) {
           transition: background 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease;
         }
         .navbar.nav-scrolled {
-          background: rgba(250,247,242,0.72);
-          backdrop-filter: blur(18px);
-          -webkit-backdrop-filter: blur(18px);
-          box-shadow: 0 2px 30px rgba(61,43,31,0.10);
-          border-bottom: 1px solid rgba(201,169,110,0.15);
+          padding-top: 0.7rem;
+          padding-bottom: 0.7rem;
+          background: rgba(250,247,242,0.55);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          box-shadow: 0 2px 30px rgba(61,43,31,0.05);
+          border-bottom: 1px solid rgba(250,247,242,0.3);
+        }
+        .navbar.nav-scrolled .nav-link {
+          color: var(--espresso);
+          font-weight: 700;
+          text-shadow: 0 2px 10px rgba(250,247,242, 0.8);
         }
         .nav-logo {
           display: flex;

@@ -44,7 +44,7 @@ export default function Experience() {
       <div className="exp-header">
         <p className="exp-label">05 — EXPERIENCE</p>
         <h2 className="exp-heading">
-          What I've <span>Been Doing</span>
+          What I've <span className="text-gradient">Been Doing</span>
         </h2>
       </div>
 
@@ -131,9 +131,6 @@ export default function Experience() {
           font-weight: 700;
           color: #3D2B1F;
           letter-spacing: -0.5px;
-        }
-        .experience-section .exp-heading span {
-          color: #E85D26;
         }
 
         /* PANELS WRAPPER */

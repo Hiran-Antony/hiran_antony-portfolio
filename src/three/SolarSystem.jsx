@@ -237,7 +237,8 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
       const intersects = raycaster.intersectObjects(planetMeshes);
 
       if (intersects.length > 0) {
-        document.body.style.cursor = 'pointer';
+        const ring = document.querySelector('.cursor-ring');
+        if (ring) ring.classList.add('hovered');
         hoveredMesh = intersects[0].object;
         
         // Show subtle hover ring
@@ -248,7 +249,8 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
         hoverRing.scale.setScalar(hoveredMesh.userData.planet.size * scaleBase * 1.3);
         hoverRing.visible = true;
       } else {
-        document.body.style.cursor = 'default';
+        const ring = document.querySelector('.cursor-ring');
+        if (ring) ring.classList.remove('hovered');
         hoveredMesh = null;
         hoverRing.visible = false;
       }
@@ -263,7 +265,8 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
     return () => {
       cancelAnimationFrame(frameId);
-      document.body.style.cursor = 'default';
+      const ring = document.querySelector('.cursor-ring');
+      if (ring) ring.classList.remove('hovered');
       mount.removeEventListener('mousemove', onMouseMove);
       mount.removeEventListener('click', onClick);
       window.removeEventListener('resize', onResize);

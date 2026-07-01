@@ -12,7 +12,7 @@ const EDU_ITEMS = [
     degree: 'B.Tech Computer Science & Engineering',
     school: 'Karunya Institute of Technology & Sciences',
     location: 'Coimbatore, Tamil Nadu',
-    detail: 'Semester 1 CGPA: 8.05',
+    detail: 'Semester 2 SGPA: 8.29',
     icon: GraduationCap,
     color: '#C9A96E',
   },
@@ -50,6 +50,7 @@ export default function Education() {
           opacity: 1, x: 0, scale: 1,
           duration: 0.8,
           ease: 'power3.out',
+          force3D: true,
           scrollTrigger: {
             trigger: card,
             start: 'top 82%',
@@ -65,8 +66,8 @@ export default function Education() {
     <section id="education" ref={sectionRef} className="section-wrap" style={{ background: 'var(--cream)' }}>
       {/* Subtle dot grid background */}
       <div style={{
-        position: 'absolute', inset: 0, opacity: 0.4,
-        backgroundImage: 'radial-gradient(circle, #C9A96E 1px, transparent 1px)',
+        position: 'absolute', inset: 0, opacity: 0.8,
+        backgroundImage: 'radial-gradient(circle, #C9A96E 1.05px, transparent 1.05px)',
         backgroundSize: '32px 32px',
         pointerEvents: 'none',
       }} />
@@ -107,6 +108,7 @@ export default function Education() {
                   alignItems: 'center',
                   marginBottom: '3.5rem',
                   gap: '0',
+                  willChange: 'transform, opacity',
                 }}
                 className="edu-timeline-row"
               >
@@ -134,11 +136,18 @@ export default function Education() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: `0 0 20px ${item.color}50`,
-                    animation: 'nodePulse 2s ease-in-out infinite',
-                    animationDelay: `${i * 0.7}s`,
+                    boxShadow: `0 0 15px ${item.color}40`, // static shadow
+                    position: 'relative',
                   }}>
-                    <Icon size={20} color={item.color} />
+                    {/* Hardware-accelerated pulse ring */}
+                    <div style={{
+                      position: 'absolute', inset: -2, borderRadius: '50%',
+                      border: `2px solid ${item.color}`,
+                      animation: 'nodePulse 2s ease-in-out infinite',
+                      animationDelay: `${i * 0.7}s`,
+                      pointerEvents: 'none',
+                    }} />
+                    <Icon size={20} color={item.color} style={{ position: 'relative', zIndex: 2 }} />
                   </div>
                 </div>
 
@@ -158,8 +167,8 @@ export default function Education() {
 
       <style>{`
         @keyframes nodePulse {
-          0%, 100% { box-shadow: 0 0 14px rgba(201,169,110,0.3); }
-          50%       { box-shadow: 0 0 30px rgba(201,169,110,0.7); }
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          50%       { transform: scale(1.35); opacity: 0; }
         }
         .edu-card {
           transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { FileDown } from 'lucide-react';
 
 import Loader          from './components/Loader';
 import Navbar          from './components/Navbar';
@@ -113,6 +114,14 @@ export default function App() {
 
   return (
     <>
+      <style>{`
+        @media (max-width: 768px) {
+          .resume-btn {
+            padding: 12px 14px !important;
+            border-radius: 999px !important;
+          }
+        }
+      `}</style>
       {/* Custom cursor elements */}
       <div className="cursor-dot"  />
       <div className="cursor-ring" />
@@ -181,7 +190,8 @@ export default function App() {
             e.currentTarget.style.color = "#C9A96E";
           }}
         >
-          ↓ Resume
+          <FileDown size={18} />
+          <span className="hidden md:inline">Resume</span>
         </a>
       </div>
     </>

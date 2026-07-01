@@ -48,7 +48,7 @@ body::before {
 /* ─── Custom Cursor ──────────────────────────────────────── */
 .cursor-dot {
   position: fixed;
-  width: 12px; height: 12px;
+  width: 8px; height: 8px;
   background: var(--gold);
   border-radius: 50%;
   pointer-events: none;
@@ -60,7 +60,7 @@ body::before {
 }
 .cursor-ring {
   position: fixed;
-  width: 36px; height: 36px;
+  width: 28px; height: 28px;
   border: 1.5px solid rgba(201,169,110,0.55);
   border-radius: 50%;
   pointer-events: none;
@@ -68,7 +68,7 @@ body::before {
   transform: translate(-50%, -50%);
   transition: transform 0.18s var(--ease-smooth), width 0.3s var(--ease-spring), height 0.3s var(--ease-spring), opacity 0.2s;
 }
-.cursor-ring.hovered { width: 56px; height: 56px; border-color: var(--gold); }
+.cursor-ring.hovered { width: 46px; height: 46px; border-color: var(--gold); }
 .cursor-dot.clicking { transform: translate(-50%,-50%) scale(0.6); }
 
 @media (max-width: 768px), (pointer: coarse) {
@@ -114,7 +114,7 @@ body::before {
 }
 
 /* ─── Reveal animations ──────────────────────────────────── */
-.reveal { opacity: 0; transform: translateY(40px); }
+.reveal { opacity: 0; transform: translateY(40px); will-change: transform, opacity; }
 .reveal.active { opacity: 1; transform: translateY(0); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
 
 /* ─── Gold button ─────────────────────────────────────────── */

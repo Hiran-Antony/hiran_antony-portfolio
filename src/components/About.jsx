@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const STATS = [
   { icon: Users,  value: 2,      suffix: '+', label: 'Client Websites Deployed' },
-  { icon: Award,  value: 8.05,   suffix: '',  label: 'Semester CGPA' },
+  { icon: Award,  value: 8.19,   suffix: '',  label: 'Overall CGPA' },
   { icon: Cpu,    value: 2,      suffix: '+', label: 'Technical Hackathons' },
   { icon: Shield, value: 'Cyber',suffix: '',  label: 'Security Awareness' },
 ];
@@ -46,7 +46,7 @@ function AnimatedCounter({ target, suffix, duration = 1.8 }) {
     });
   }, [target, suffix, duration]);
 
-  return <span ref={ref}>{typeof target === 'number' ? '0' + suffix : target + suffix}</span>;
+  return <span ref={ref} style={{ fontVariantNumeric: 'tabular-nums', display: 'inline-block' }}>{typeof target === 'number' ? '0' + suffix : target + suffix}</span>;
 }
 
 export default function About() {
@@ -65,6 +65,7 @@ export default function About() {
           opacity: 1, x: 0,
           duration: 0.5,
           ease: 'power2.out',
+          force3D: true,
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top 70%',
@@ -128,7 +129,7 @@ export default function About() {
             <div className="glass" style={{ padding: '1.25rem 1.5rem' }}>
               {[
                 [Phone, '+91 9360276068'],
-                [Mail, 'hiranantony@karunya.edu.in'],
+                [Mail, 'rhiranantony15@gmail.com'],
                 [GraduationCap, 'Karunya Institute of Technology & Sciences'],
                 [MapPin, 'Coimbatore, India'],
               ].map(([Icon, text]) => (

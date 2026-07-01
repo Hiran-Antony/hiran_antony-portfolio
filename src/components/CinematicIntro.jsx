@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import introVideo from "../assets/videos/intro.mp4";
+import introVideo from "../assets/videos/intro.mp4?v=2";
 
 export default function CinematicIntro({ onComplete }) {
   const containerRef = useRef(null);

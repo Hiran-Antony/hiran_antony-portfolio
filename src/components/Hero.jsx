@@ -165,7 +165,7 @@ export default function Hero({ introComplete }) {
         >
           Second-year B.Tech CSE student at Karunya Institute | Shipping
           real-world client websites and exploring ambitious ideas
-          through code, design, and 3D.
+          through code, design, and 3D animated websites.
         </p>
 
         {/* CTAs */}

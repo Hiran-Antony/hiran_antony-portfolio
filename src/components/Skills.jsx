@@ -15,7 +15,14 @@ export default function Skills() {
   const containerRef = useRef(null);
   const mountRef = useRef(null);
   const isInView = useInView(containerRef, { amount: 0.2 }); // Trigger when 20% visible
-  const shouldMount = useInView(mountRef, { once: true, margin: "300px" });
+  
+  const [shouldMount, setShouldMount] = useState(false);
+  useEffect(() => {
+    // Pre-compile heavy WebGL shaders 3.5s after page load (while user is reading Hero section)
+    // This completely prevents it from interrupting any scroll animations!
+    const timer = setTimeout(() => setShouldMount(true), 3500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [focusedIdx, setFocusedIdx] = useState(0);
   const [isFocused, setIsFocused] = useState(false); // start false
@@ -183,7 +190,6 @@ export default function Skills() {
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.72rem',
                 color: active ? 'var(--espresso)' : cat.color,
-                cursor: 'pointer',
                 transition: 'all 0.3s ease',
               }}
             >
