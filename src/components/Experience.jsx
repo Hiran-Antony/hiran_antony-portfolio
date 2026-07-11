@@ -79,25 +79,23 @@ export default function Experience() {
         {/* Panel 2 — Internship */}
         <div className="exp-panel">
           <div className="exp-panel-icon">🚀</div>
-          <p className="exp-panel-tag">Looking For</p>
+          <p className="exp-panel-tag">Completed</p>
           <h3 className="exp-panel-title">Internship</h3>
           <p className="exp-panel-since">
-            Open · Available Now
+            June 01–20, 2026
           </p>
           <p className="exp-panel-desc">
-            Seeking internship opportunities in 
-            web development and software engineering 
-            to grow with a real team.
+            Completed an offline Full Stack Development internship at QAROO India Pvt. Ltd., Coimbatore — gaining hands-on industry experience.
           </p>
           <div className="exp-panel-stat">
-            <span className="stat-number">B.Tech</span>
+            <span className="stat-number">Full Stack</span>
             <span className="stat-label">
-              CSE · Karunya Institute
+              Developer Role
             </span>
           </div>
-          <div className="exp-status-dot seeking">
-            <span className="dot-pulse seeking" />
-            Open to Opportunities
+          <div className="exp-status-dot completed">
+            <span className="dot-pulse completed" />
+            Internship Completed ✅
           </div>
         </div>
 
@@ -239,26 +237,34 @@ export default function Experience() {
           background: #22C55E;
           display: inline-block;
           position: relative;
-          animation: pulseDot 2s ease-in-out infinite;
+        }
+        .experience-section .dot-pulse::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: inherit;
+          animation: pulseDotScale 2s ease-out infinite;
+          z-index: -1;
         }
         .experience-section .dot-pulse.seeking {
           background: #C9A96E;
-          animation: pulseDotSeeking 2s ease-in-out infinite;
         }
-        @keyframes pulseDot {
-          0%, 100% { 
-            box-shadow: 0 0 0 0 rgba(34,197,94,0.4); 
-          }
-          50% { 
-            box-shadow: 0 0 0 6px rgba(34,197,94,0); 
-          }
+        .experience-section .dot-pulse.completed {
+          background: #22C55E;
         }
-        @keyframes pulseDotSeeking {
-          0%, 100% { 
-            box-shadow: 0 0 0 0 rgba(201,169,110,0.4); 
+        .experience-section .dot-pulse.completed::after {
+          display: none;
+        }
+        
+        @keyframes pulseDotScale {
+          0% { 
+            transform: scale(1);
+            opacity: 0.7;
           }
-          50% { 
-            box-shadow: 0 0 0 6px rgba(201,169,110,0); 
+          100% { 
+            transform: scale(3.5);
+            opacity: 0;
           }
         }
 

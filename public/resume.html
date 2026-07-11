@@ -207,7 +207,7 @@
     .tool-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 10px;
     }
     .tool-tag {
       font-size: 10px;
@@ -449,36 +449,36 @@
         min-height: 100vh;
         overflow: visible;
       }
-      /* Shrink font sizes and spacing to absolutely guarantee 1 page */
-      .resume-header { padding: 18px 32px 14px; }
-      .main-content { gap: 10px; padding: 18px 24px; }
-      .sidebar { gap: 16px; padding: 18px 20px; }
+      /* Adjust font sizes and spacing to perfectly fill 1 page */
+      .resume-header { padding: 15px 24px 11px; }
+      .main-content { gap: 8px; padding: 15px 20px; }
+      .sidebar { gap: 10px; padding: 15px 18px; }
       
-      .section-divider { margin-top: 2px; margin-bottom: 8px; }
-      .section-heading { font-size: 11.5px; margin-bottom: 8px; }
+      .section-divider { margin-top: 2px; margin-bottom: 7px; }
+      .section-heading { font-size: 11px; margin-bottom: 7px; }
       
-      .edu-item, .cert-item { margin-bottom: 6px; padding-bottom: 6px; }
-      .project-card { margin-bottom: 6px; padding: 8px 12px; }
-      .project-desc { font-size: 10.5px; margin-bottom: 4px; line-height: 1.4; }
-      .project-client { font-size: 10px; margin-bottom: 3px; }
+      .edu-item, .cert-item { margin-bottom: 5px; padding-bottom: 5px; }
+      .project-card { margin-bottom: 5px; padding: 8px 11px; gap: 4px; }
+      .project-desc { font-size: 9.5px; margin-bottom: 3px; line-height: 1.35; }
+      .project-client { font-size: 9.5px; margin-bottom: 2px; }
       
-      .skill-item { margin-bottom: 8px; }
-      .personal-item { margin-bottom: 6px; }
-      .highlights-list { gap: 4px; }
-      .highlights-list li { font-size: 10.5px; line-height: 1.4; }
+      .skill-item { margin-bottom: 4px; }
+      .personal-item { margin-bottom: 4px; }
+      .lang-item { margin-bottom: 4px; }
+      .tool-tags { gap: 6px; }
       
-      .header-name { font-size: 26px; margin-bottom: 4px; }
-      .role-pills { margin-bottom: 8px; }
-      .role-pill { font-size: 9.5px; padding: 2px 8px; }
-      .hc-item { font-size: 10px; }
+      .header-name { font-size: 24.5px; margin-bottom: 3px; }
+      .role-pills { margin-bottom: 7px; }
+      .role-pill { font-size: 8.5px; padding: 2px 6px; }
+      .hc-item { font-size: 9px; }
       
-      .sb-section-label { font-size: 8.5px; margin-bottom: 8px; }
-      .skill-name, .lang-name, .personal-val { font-size: 10.5px; }
-      .tool-tag, .skill-pct, .lang-level, .personal-key { font-size: 8.5px; }
-      .edu-degree, .project-title, .cert-name { font-size: 11.5px; }
-      .edu-institution { font-size: 10.5px; }
-      .edu-meta, .project-date, .cert-meta { font-size: 9.5px; }
-      .project-tag { font-size: 8px; padding: 2px 6px; }
+      .sb-section-label { font-size: 8px; margin-bottom: 4px; }
+      .skill-name, .lang-name, .personal-val { font-size: 9.5px; }
+      .tool-tag, .skill-pct, .lang-level, .personal-key { font-size: 7.5px; }
+      .edu-degree, .project-title, .cert-name { font-size: 11px; }
+      .edu-institution { font-size: 10px; }
+      .edu-meta, .project-date, .cert-meta { font-size: 9px; }
+      .project-tag { font-size: 7.5px; padding: 1.5px 5px; }
       
       * {
         -webkit-print-color-adjust: exact;
@@ -540,6 +540,34 @@
           </div>
           <div class="skill-item">
             <div class="skill-header">
+              <span class="skill-name">React.js</span>
+              <span class="skill-pct">75%</span>
+            </div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">TypeScript</span>
+              <span class="skill-pct">60%</span>
+            </div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:60%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">Node.js</span>
+              <span class="skill-pct">65%</span>
+            </div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:65%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">Tailwind CSS</span>
+              <span class="skill-pct">80%</span>
+            </div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
               <span class="skill-name">C Programming</span>
               <span class="skill-pct">80%</span>
             </div>
@@ -576,7 +604,16 @@
             <span class="tool-tag">HTML</span>
             <span class="tool-tag">CSS</span>
             <span class="tool-tag">JavaScript</span>
+            <span class="tool-tag">React</span>
+            <span class="tool-tag">TypeScript</span>
+            <span class="tool-tag">Node.js</span>
+            <span class="tool-tag">Tailwind CSS</span>
             <span class="tool-tag">Python</span>
+            <span class="tool-tag">GSAP</span>
+            <span class="tool-tag">Framer Motion</span>
+            <span class="tool-tag">Three.js</span>
+            <span class="tool-tag">Vite</span>
+            <span class="tool-tag">REST API</span>
             <span class="tool-tag">IoT</span>
             <span class="tool-tag">Kali Linux</span>
             <span class="tool-tag">MySQL</span>
@@ -605,10 +642,6 @@
         <div>
           <div class="sb-section-label">Personal</div>
           <div class="personal-item">
-            <div class="personal-key">Date of Birth</div>
-            <div class="personal-val">15 July 2008</div>
-          </div>
-          <div class="personal-item">
             <div class="personal-key">Location</div>
             <div class="personal-val">Kovaipudur, Coimbatore — 641042</div>
           </div>
@@ -629,7 +662,7 @@
           <div class="edu-item">
             <div class="edu-degree">B.Tech — Computer Science &amp; Engineering</div>
             <div class="edu-institution">Karunya Institute of Technology &amp; Sciences, Coimbatore</div>
-            <div class="edu-meta">2025 – Present &nbsp;·&nbsp; Sem 1 CGPA: 8.05</div>
+            <div class="edu-meta">2025 – Present &nbsp;·&nbsp; Sem 2 CGPA: 8.29 &nbsp;|&nbsp; Overall: 8.19</div>
           </div>
           <div class="edu-item">
             <div class="edu-degree">Higher Secondary — Class XII (CBSE)</div>
@@ -645,52 +678,90 @@
 
         <div class="section-divider"></div>
 
+        <!-- Experience -->
+        <div class="section-block">
+          <div class="section-heading">Experience</div>
+          <div class="edu-item">
+            <div class="edu-degree">Freelance Web Developer</div>
+            <div class="edu-institution">Self-Employed</div>
+            <div class="edu-meta">2025 – Present &nbsp;·&nbsp; Delivered 3+ real client websites independently</div>
+          </div>
+          <div class="edu-item">
+            <div class="edu-degree">Full Stack Development Intern</div>
+            <div class="edu-institution">QAROO India Pvt. Ltd., Coimbatore</div>
+            <div class="edu-meta">June 01–20, 2026 &nbsp;·&nbsp; Offline Internship</div>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
         <!-- Projects -->
         <div class="section-block">
           <div class="section-heading">Projects</div>
           <div class="project-card">
             <div class="project-header">
-              <div class="project-title">robertrajiah.in — Personal Portfolio</div>
-              <div class="project-date">2025</div>
-            </div>
-            <div class="project-client">Client · M. Robert Rajiah, Asst. Professor</div>
-            <div class="project-desc">Built and deployed a premium personal portfolio website. Custom domain on Vercel, GitHub version control, professional design standards.</div>
-            <div class="project-tags">
-              <span class="project-tag">HTML</span>
-              <span class="project-tag">CSS</span>
-              <span class="project-tag">JavaScript</span>
-              <span class="project-tag">Vercel</span>
-              <span class="project-tag">GitHub</span>
-            </div>
-          </div>
-          <div class="project-card">
-            <div class="project-header">
-              <div class="project-title">College Admission Campaign Page</div>
-              <div class="project-date">2025</div>
-            </div>
-            <div class="project-client">Client · Real College Client</div>
-            <div class="project-desc">Interactive admission campaign landing page with integrated SMS marketing functionality for a real college client.</div>
-            <div class="project-tags">
-              <span class="project-tag">HTML</span>
-              <span class="project-tag">CSS</span>
-              <span class="project-tag">JavaScript</span>
-              <span class="project-tag">SMS API</span>
-            </div>
-          </div>
-          <div class="project-card">
-            <div class="project-header">
               <div class="project-title">FashionVerse Platform</div>
-              <div class="project-date">2026 – Present</div>
+              <div class="project-date">2026</div>
             </div>
-            <div class="project-client">Personal Project · Full Stack Fashion Platform</div>
-            <div class="project-desc">Building a full-stack fashion platform with a modern React frontend and robust backend with AI-assisted development pipeline.</div>
-            <div class="project-tags">
-              <span class="project-tag">React</span>
-              <span class="project-tag">Node.js</span>
-              <span class="project-tag">Supabase</span>
-              <span class="project-tag">PostgreSQL</span>
-              <span class="project-tag in-progress">In Progress</span>
+            <div class="project-client">Personal Project · Full Stack Fashion E-Commerce</div>
+            <div class="project-desc">A premium full-stack e-commerce platform with AI virtual try-on, fashionverse AI assistant, Razorpay integration, blockchain order verification on Polygon network, cinematic dark UI, delivery management with live map and PIN confirmation, NFT product certificates, 7-layer security system, and real-time admin dashboard with sales analytics.</div>
+            <div class="project-tags" style="display: flex; justify-content: space-between; align-items: flex-end;">
+              <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                <span class="project-tag">React</span>
+                <span class="project-tag">TypeScript</span>
+                <span class="project-tag">Supabase</span>
+                <span class="project-tag">Tailwind</span>
+                <span class="project-tag">GSAP</span>
+                <span class="project-tag">Solidity</span>
+                <span class="project-tag">Polygon</span>
+                <span class="project-tag">Three.js</span>
+              </div>
+              <a href="https://fashionverseonline.vercel.app" target="_blank" style="font-size: 9.5px; color: #4CAF50; font-family: 'JetBrains Mono', monospace; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 3px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                Live Site
+              </a>
             </div>
+          </div>
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-title">Recipe Remixer</div>
+              <div class="project-date">2026</div>
+            </div>
+            <div class="project-client">AI-Powered Recipe Generator · 🏆 Top 5 Conesta AI Sprint</div>
+            <div class="project-desc">A full-stack AI app that instantly transforms available ingredients into personalized recipes. Built with real LLM integration and secure authentication.</div>
+            <div class="project-tags" style="display: flex; justify-content: space-between; align-items: flex-end;">
+              <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                <span class="project-tag">Next.js</span>
+                <span class="project-tag">TypeScript</span>
+                <span class="project-tag">MongoDB</span>
+                <span class="project-tag">Groq AI</span>
+                <span class="project-tag">Llama3</span>
+                <span class="project-tag">NextAuth</span>
+                <span class="project-tag">Tailwind</span>
+                <span class="project-tag">Vercel</span>
+              </div>
+              <a href="https://reciperemixer.vercel.app" target="_blank" style="font-size: 9.5px; color: #4CAF50; font-family: 'JetBrains Mono', monospace; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 3px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                Live Site
+              </a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-title">Freelance Client Projects</div>
+              <div class="project-date">2025</div>
+            </div>
+            <div class="project-client">robertrajiah.in · N-1729 Academy · Admission Campaign</div>
+            <div class="project-desc">Designed, built, and deployed 3 professional websites for real clients. Features include SMS API integration, custom GSAP animations, and optimized SEO.</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                <span class="project-tag">HTML5</span>
+                <span class="project-tag">CSS3</span>
+                <span class="project-tag">JavaScript</span>
+                <span class="project-tag">GSAP</span>
+                <span class="project-tag">SMS API</span>
+                <span class="project-tag">Responsive Design</span>
+                <span class="project-tag">Vercel</span>
+              </div>
           </div>
         </div>
 
@@ -709,8 +780,8 @@
           <div class="cert-item">
             <div class="cert-check">✓</div>
             <div>
-              <div class="cert-name">Red Hat System Administration I (RH124)</div>
-              <div class="cert-meta">40 Credit Hours &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; Red Hat</div>
+              <div class="cert-name">Conesta Forge — 5-Day AI Build Sprint</div>
+              <div class="cert-meta">Rank: #5 &nbsp;·&nbsp; June 2026 &nbsp;·&nbsp; Conesta · Powered by Fludigo</div>
             </div>
           </div>
           <div class="cert-item">
@@ -724,24 +795,9 @@
             <div class="cert-check">✓</div>
             <div>
               <div class="cert-name">3-Day AI Innovation Bootcamp — Aurelion Hackathon</div>
-              <div class="cert-meta">Feb 2026 &nbsp;·&nbsp; Karunya University · IEEE · ACM &nbsp;·&nbsp; 24-Hour Hackathon</div>
+              <div class="cert-meta">Feb 2026 &nbsp;·&nbsp; Karunya University · IEEE · ACM</div>
             </div>
           </div>
-        </div>
-
-        <div class="section-divider"></div>
-
-        <!-- Key Highlights -->
-        <div class="section-block">
-          <div class="section-heading">Key Highlights</div>
-          <ul class="highlights-list">
-            <li>Built and deployed 2 real client websites independently as a first-year student</li>
-            <li>Google Cloud Certified — Cloud Digital Leader (Valid till 2029)</li>
-            <li>Red Hat System Administration I certified (40 credit hours)</li>
-            <li>Cybersecurity knowledge with hands-on Kali Linux experience</li>
-            <li>AI-assisted development pipeline using Claude &amp; Antigravity</li>
-            <li>Open to internships and freelance web development projects</li>
-          </ul>
         </div>
 
       </div><!-- /main-content -->

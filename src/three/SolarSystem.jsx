@@ -261,19 +261,40 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
       renderer.render(scene, camera);
     };
-    animate();
+      // Setup IntersectionObserver to pause the animation loop when off-screen
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              if (!frameId) { // Only start if not already running
+                 lastRender = performance.now();
+                 animate(lastRender);
+              }
+            } else {
+              if (frameId) {
+                cancelAnimationFrame(frameId);
+                frameId = null;
+              }
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      
+      observer.observe(mountRef.current);
 
-    return () => {
-      cancelAnimationFrame(frameId);
-      const ring = document.querySelector('.cursor-ring');
-      if (ring) ring.classList.remove('hovered');
-      mount.removeEventListener('mousemove', onMouseMove);
-      mount.removeEventListener('click', onClick);
-      window.removeEventListener('resize', onResize);
-      renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-    };
-  }, []); // Empty dependency array ensures Three.js only mounts once
+      return () => {
+        if (frameId) cancelAnimationFrame(frameId);
+        observer.disconnect();
+        const ring = document.querySelector('.cursor-ring');
+        if (ring) ring.classList.remove('hovered');
+        mount.removeEventListener('mousemove', onMouseMove);
+        mount.removeEventListener('click', onClick);
+        window.removeEventListener('resize', onResize);
+        renderer.dispose();
+        if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+      };
+    }, []); // Empty dependency array ensures Three.js only mounts once
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>

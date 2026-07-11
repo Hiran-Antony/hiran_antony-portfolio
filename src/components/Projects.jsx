@@ -103,9 +103,11 @@ export default function Projects() {
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.75rem',
-                  color: 'rgba(201,169,110,0.4)',
+                  color: 'rgba(201,169,110,0.9)',
                   marginTop: '0.5rem',
                   letterSpacing: '0.1em',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                  fontWeight: 600,
                 }}
               >
                 scroll to explore all {TOTAL} projects ↓
@@ -132,9 +134,9 @@ export default function Projects() {
         .proj-card-shell {
           height: auto;
           min-height: 410px;
-          background: rgba(255, 255, 255, 0.1) !important;
-          backdrop-filter: blur(20px) !important;
-          -webkit-backdrop-filter: blur(20px) !important;
+          background: rgba(255, 255, 255, 0.02) !important;
+          backdrop-filter: blur(16px) !important;
+          -webkit-backdrop-filter: blur(16px) !important;
           transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.4s cubic-bezier(0.33, 1, 0.68, 1);
         }
         

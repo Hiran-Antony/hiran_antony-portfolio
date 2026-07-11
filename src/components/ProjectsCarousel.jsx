@@ -2,19 +2,17 @@ import { useRef, useLayoutEffect, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import cloudBgVideo from '../assets/cloud-bg.mp4';
+import cloudBgImg from '../assets/cloud-bg.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ProjectsCarousel({ projects, renderCard, header }) {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
-  const videoRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleScroll = (e) => {
     const track = e.target;
-    // Since cards now take exactly 100% of the track width, scrollLeft / clientWidth perfectly gives the index.
     const index = Math.round(track.scrollLeft / track.clientWidth);
     setActiveIndex(Math.min(projects.length - 1, Math.max(0, index)));
   };
@@ -33,28 +31,30 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
     track.scrollTo({ left: newIndex * track.clientWidth, behavior: 'smooth' });
   };
 
-  // IntersectionObserver to pause video when out of view
   useEffect(() => {
-    const video = videoRef.current;
-    const section = sectionRef.current;
-    if (!video || !section) return;
+    // Force GSAP to recalculate pinned scroll metrics when the tab becomes visible again or on resize
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        setTimeout(() => ScrollTrigger.refresh(), 50);
+      }
+    };
+    
+    let resizeTimer;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 150); // Debounce to allow DOM layout to settle before recalculating
+    };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            video.play().catch((err) => console.warn("Video auto-play prevented:", err));
-          } else {
-            video.pause();
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(section);
-
-    return () => observer.disconnect();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("resize", handleResize);
+    
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -74,9 +74,14 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
         const getScrollAmount = () => {
           const cards = track.children;
           if (cards.length < 2) return 0;
-          // By moving the track exactly the distance between the first and last card,
-          // the last card will end up perfectly centered (where the first card started).
-          return cards[cards.length - 1].offsetLeft - cards[0].offsetLeft;
+          let amt = cards[cards.length - 1].offsetLeft - cards[0].offsetLeft;
+          // Fallback: If browser returns 0 or negative because the tab is hidden, calculate an estimate
+          // so GSAP doesn't assign 0 padding and immediately unpin, which skips sections.
+          if (amt <= 0) {
+            const cardWidth = window.innerWidth >= 768 ? window.innerWidth * 0.5 : window.innerWidth;
+            amt = (cards.length - 1) * cardWidth;
+          }
+          return amt;
         };
 
         const tween = gsap.to(track, {
@@ -132,28 +137,24 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
       
       {/* Background Media */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 projects-section"
         style={{ width: '100%', height: '100%' }}
       >
-        {/* Desktop & Mobile Video */}
-        <video
-          ref={videoRef}
-          className="object-cover"
-          style={{ width: '100%', height: '100%' }}
-          loop
-          muted
-          playsInline
-          autoPlay
-          preload="auto"
-        >
-          <source src={cloudBgVideo} type="video/mp4" />
-        </video>
-        
-        {/* Dark Overlay for Text Legibility */}
-        <div className="absolute inset-0 bg-[#1a0f08]/45" style={{ width: '100%', height: '100%' }} />
+        {/* Combined Static Image Background and Dark Overlay */}
+        <div 
+          className="projects-bg-image"
+          style={{
+            backgroundImage: `linear-gradient(rgba(10, 8, 5, 0.55), rgba(10, 8, 5, 0.55)), url(${cloudBgImg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            position: 'absolute',
+            inset: 0,
+          }}
+        />
       </div>
 
-      {header}
+      <div className="projects-content" style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {header}
       
       <style>{`
         @media (min-width: 768px) {
@@ -207,6 +208,7 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
             0{activeIndex + 1} / 0{projects.length}
           </span>
         </div>
+      </div>
       </div>
     </section>
   );

@@ -18,6 +18,7 @@ import Contact         from './components/Contact';
 import useCursor           from './hooks/useCursor';
 import useScrollAnimation  from './hooks/useScrollAnimation';
 import ScrollMouse         from './components/ScrollMouse';
+import Magnet              from './components/ui/Magnet';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -156,31 +157,29 @@ export default function App() {
         </main>
 
         {/* Floating Resume Button */}
-        <a
-          href="/resume.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            position: "fixed",
-            bottom: "32px",
-            right: "32px",
-            background: "#3D2B1F",
-            color: "#FAF7F2",
-            border: "0.5px solid #C9A96E",
-            padding: "10px 22px",
-            borderRadius: "40px",
-            fontSize: "13px",
-            fontWeight: "500",
-            textDecoration: "none",
-            zIndex: 999,
-            boxShadow: "0 4px 20px rgba(61,43,31,0.25)",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            fontFamily: "Space Grotesk, sans-serif",
-            letterSpacing: "0.05em",
-            transition: "all 0.2s ease",
-          }}
+        <div style={{ position: "fixed", bottom: "32px", right: "32px", zIndex: 999 }}>
+          <Magnet padding={50} magnetStrength={3}>
+            <a
+              href="/resume.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "#3D2B1F",
+                color: "#FAF7F2",
+                border: "0.5px solid #C9A96E",
+                padding: "10px 22px",
+                borderRadius: "40px",
+                fontSize: "13px",
+                fontWeight: "500",
+                textDecoration: "none",
+                boxShadow: "0 4px 20px rgba(61,43,31,0.25)",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                fontFamily: "Space Grotesk, sans-serif",
+                letterSpacing: "0.05em",
+                transition: "all 0.2s ease",
+              }}
           onMouseEnter={e => {
             e.currentTarget.style.background = "#C9A96E";
             e.currentTarget.style.color = "#3D2B1F";
@@ -192,7 +191,9 @@ export default function App() {
         >
           <FileDown size={18} />
           <span className="hidden md:inline">Resume</span>
-        </a>
+            </a>
+          </Magnet>
+        </div>
       </div>
     </>
   );

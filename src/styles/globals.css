@@ -56,7 +56,6 @@ body::before {
   transform: translate(-50%, -50%);
   box-shadow: 0 0 12px 4px rgba(201,169,110,0.6);
   transition: transform 0.1s var(--ease-smooth), opacity 0.2s;
-  mix-blend-mode: multiply;
 }
 .cursor-ring {
   position: fixed;

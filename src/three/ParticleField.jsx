@@ -125,11 +125,16 @@ export default function ParticleField() {
       window.addEventListener('mousemove', onMouseMove);
     }
 
-    // Resize
+    // Resize (debounced)
+    let resizeTimeout;
     const onResize = () => {
-      camera.aspect = mount.clientWidth / mount.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(mount.clientWidth, mount.clientHeight);
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        if (!mount.clientWidth || !mount.clientHeight) return;
+        camera.aspect = mount.clientWidth / mount.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(mount.clientWidth, mount.clientHeight);
+      }, 150);
     };
     window.addEventListener('resize', onResize);
 
@@ -137,9 +142,18 @@ export default function ParticleField() {
     let frameId;
     let lastRender = 0;
     const fpsInterval = 1000 / 30; // 30 FPS target for mobile
+    let isVisible = true;
+
+    // Only render when the container is in the viewport to save GPU
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+    }, { threshold: 0, rootMargin: "100px" });
+    observer.observe(mount);
 
     const animate = (time) => {
       frameId = requestAnimationFrame(animate);
+
+      if (!isVisible) return;
 
       if (isMobile) {
         if (time - lastRender < fpsInterval) return;
@@ -175,6 +189,8 @@ export default function ParticleField() {
 
     return () => {
       cancelAnimationFrame(frameId);
+      observer.disconnect();
+      clearTimeout(resizeTimeout);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', onResize);
       renderer.dispose();
