@@ -123,7 +123,6 @@ export default function Certifications() {
           gl={{ antialias: true, alpha: true }}
           dpr={[1, 1.5]}
         >
-          <color attach="background" args={['#050818']} />
           <Suspense fallback={null}>
             <GalleryScene
               scrollProgressRef={scrollProgressRef}

@@ -1,7 +1,16 @@
 .cert-gallery-section {
-  background: #050818;
   position: relative;
   overflow: hidden;
+  background: #050818;
+}
+
+.cert-gallery-section::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: url('../../assets/certificates-bg.webp') center/cover no-repeat;
+  filter: blur(1px);
+  z-index: 0;
 }
 
 .cert-gallery-section--desktop {
@@ -52,6 +61,7 @@
 .cert-gallery-canvas {
   position: absolute;
   inset: 0;
+  z-index: 1;
 }
 
 .gallery-progress {
@@ -112,10 +122,14 @@
 }
 
 .cert-label {
-  background: rgba(5, 8, 24, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(201, 169, 110, 0.3);
+  background: linear-gradient(145deg, rgba(35, 35, 40, 0.95), rgba(20, 20, 25, 0.98));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #c9a96e;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.8),
+    -1px -1px 12px rgba(201, 169, 110, 0.4),
+    1px 1px 12px rgba(201, 169, 110, 0.1);
   border-radius: 14px;
   padding: 16px 20px;
   min-width: 260px;
@@ -392,11 +406,14 @@
   opacity: 0;
   transform: translateY(30px);
   pointer-events: none;
-  background: rgba(5, 8, 24, 0.80);
+  background: linear-gradient(145deg, rgba(35, 35, 40, 0.95), rgba(20, 20, 25, 0.98));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(201,169,110,0.2);
-  border-top: 1px solid rgba(201,169,110,0.4);
+  border: 1px solid #c9a96e;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.8),
+    -1px -1px 12px rgba(201, 169, 110, 0.4),
+    1px 1px 12px rgba(201, 169, 110, 0.1);
   border-radius: 16px;
   padding: 16px 20px;
 }

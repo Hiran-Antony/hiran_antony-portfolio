@@ -28,33 +28,34 @@ export default function Contact() {
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setSending(true);
     setBurst(true);
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyc5xwnTpSyLnu4dFfDRR2-bS9ARASK6jcOnBNByWtujdsbqjmFg7biFohzekWJpsz4vw/exec';
-    const formData = new FormData();
-    formData.append('Name', form.name);
-    formData.append('Phone No', form.phone);
-    formData.append('Email', form.email);
-    formData.append('Message', form.message);
+    // Format the message for WhatsApp
+    const whatsappNumber = '919360276068';
+    const message = `*New Contact Request*
+*Name:* ${form.name}
+*Phone:* ${form.phone}
+*Email:* ${form.email}
 
-    try {
-      await fetch(scriptURL, { method: 'POST', body: formData });
-      setSending(false);
-      setSent(true);
-      setTimeout(() => { 
-        setBurst(false); 
-        setSent(false); 
-        setForm({ name:'', phone:'', email:'', message:'' }); 
-      }, 4000);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSending(false);
-      setBurst(false);
-      alert('Oops! Something went wrong while sending the message.');
-    }
+*Message:*
+${form.message}`;
+
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank');
+
+    setSending(false);
+    setSent(true);
+    
+    setTimeout(() => { 
+      setBurst(false); 
+      setSent(false); 
+      setForm({ name:'', phone:'', email:'', message:'' }); 
+    }, 4000);
   };
 
   useEffect(() => {

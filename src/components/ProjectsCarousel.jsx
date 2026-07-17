@@ -2,7 +2,7 @@ import { useRef, useLayoutEffect, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import cloudBgImg from '../assets/cloud-bg.png';
+import projectsBgImg from '../assets/projects-bg.webp';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -144,7 +144,7 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
         <div 
           className="projects-bg-image"
           style={{
-            backgroundImage: `linear-gradient(rgba(10, 8, 5, 0.55), rgba(10, 8, 5, 0.55)), url(${cloudBgImg})`,
+            backgroundImage: `linear-gradient(rgba(10, 8, 5, 0.55), rgba(10, 8, 5, 0.55)), url(${projectsBgImg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             position: 'absolute',
