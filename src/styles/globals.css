@@ -4,7 +4,12 @@
 @tailwind utilities;
 
 /* ─── Base Reset ─────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  cursor: none !important; 
+}
 
 html {
   scroll-behavior: auto; /* Lenis handles scroll */
@@ -19,7 +24,7 @@ body {
   font-family: var(--font-body);
   line-height: 1.6;
   overflow-x: hidden;
-  cursor: none; /* Custom cursor replaces */
+  cursor: none !important; /* Custom cursor replaces */
 }
 
 /* ─── Grain texture overlay ──────────────────────────────── */
@@ -74,7 +79,7 @@ body::before {
   .cursor-dot, .cursor-ring {
     display: none !important;
   }
-  body, a, button, .btn-gold, .btn-outline {
+  * {
     cursor: auto !important;
   }
 }
@@ -231,4 +236,86 @@ body::before {
     transform: scale(1.08); 
     opacity: 1; 
   }
+}
+.tech-star {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  opacity: 0.8;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 0.95; }
+}
+
+.tech-star:hover,
+.tech-star.hovered {
+  opacity: 1;
+  transform: scale(1.4);
+  animation: none;
+}
+
+.tech-star-icon {
+  width: 100%;
+  height: 100%;
+  filter: 
+    brightness(0) saturate(100%) 
+    invert(73%) sepia(28%) saturate(573%) 
+    hue-rotate(357deg) brightness(110%) 
+    contrast(100%)
+    drop-shadow(0 0 6px rgba(201,169,110,0.7));
+}
+
+.tech-star.hovered .tech-star-icon {
+  filter: 
+    brightness(0) saturate(100%) 
+    invert(73%) sepia(28%) saturate(573%) 
+    hue-rotate(357deg) brightness(94%) 
+    contrast(88%)
+    drop-shadow(0 0 12px rgba(201,169,110,0.9));
+}
+
+.tech-star-tooltip {
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 14, 6, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(201,169,110,0.4);
+  color: #FAF7F2;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: 'Space Grotesk', sans-serif;
+  animation: tooltipFadeIn 0.2s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.tech-star-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(201,169,110,0.4);
+}
+@keyframes starFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }

@@ -78,7 +78,7 @@ const TOTAL = PROJECTS.length;
 export default function Projects() {
   return (
     <>
-      <div
+      <section
         id="projects"
         style={{
           background: 'linear-gradient(180deg, #1a0f08 0%, #0A0704 100%)',
@@ -116,7 +116,7 @@ export default function Projects() {
           }
           renderCard={(proj, index) => <CardInner proj={proj} index={index} />} 
         />
-      </div>
+      </section>
 
       <style>{`
         /* Stable wrapper to prevent hover flicker and elevate stacking context */

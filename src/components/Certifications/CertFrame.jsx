@@ -117,8 +117,8 @@ export default function CertFrame({
       <mesh 
         position={[0, 0, 0.01]} 
         onClick={() => onViewFull(cert.image)}
-        onPointerOver={() => document.body.style.cursor = 'pointer'}
-        onPointerOut={() => document.body.style.cursor = 'auto'}
+        onPointerOver={() => document.querySelector('.cursor-ring')?.classList.add('hovered')}
+        onPointerOut={() => document.querySelector('.cursor-ring')?.classList.remove('hovered')}
       >
         <planeGeometry args={[CERT_WIDTH, CERT_HEIGHT]} />
         <meshStandardMaterial map={texture} roughness={0.3} metalness={0} />

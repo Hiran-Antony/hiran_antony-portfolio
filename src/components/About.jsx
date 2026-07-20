@@ -119,6 +119,7 @@ export default function About() {
                   height: '100%',
                   objectFit: 'cover',
                   display: 'block',
+                  filter: 'brightness(1.06)',
                 }}
               />
               {/* Shimmer sweep */}

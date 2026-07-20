@@ -121,8 +121,7 @@ export default function Skills() {
               exit={{ opacity: 0, y: 15 }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
               style={{
-                background: 'rgba(61,43,31,0.85)',
-                backdropFilter: 'blur(12px)',
+                background: 'transparent',
                 border: '1px solid rgba(201,169,110,0.25)',
                 borderRadius: '16px',
                 padding: '20px 24px',

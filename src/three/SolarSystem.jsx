@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
+import TechStarsOverlay from './TechStarsOverlay';
 
 const PLANETS = [
   { name: 'Frontend',  skills: ['HTML','CSS','JavaScript'], color: '#E85D26', radius: 2.2, orbitR: 18, speed: 0.008, size: 2.0 },
@@ -298,7 +299,8 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
+      <div ref={mountRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, zIndex: 0 }} />
+      <TechStarsOverlay />
     </div>
   );
 }

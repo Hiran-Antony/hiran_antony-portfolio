@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import CertFrame from './CertFrame';
 import GalleryLights from './GalleryLights';
+import GoldenDust from './GoldenDust';
 import { cameraFocusPoints } from './certData';
 
 const totalCerts = 5;
@@ -67,6 +68,7 @@ export default function GalleryScene({
   return (
     <>
       <GalleryLights activeCert={activeCert} />
+      <GoldenDust />
       <fog attach="fog" args={['#050818', 8, 25]} />
 
       {certificates.map((cert, i) => {
