@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { FileDown } from 'lucide-react';
+import { usePerformanceTier } from './context/PerformanceContext';
 
 import Loader          from './components/Loader';
 import Navbar          from './components/Navbar';
@@ -15,7 +16,6 @@ import Experience      from './components/Experience';
 import Certifications  from './components/Certifications';
 import Contact         from './components/Contact';
 
-import useCursor           from './hooks/useCursor';
 import useScrollAnimation  from './hooks/useScrollAnimation';
 import ScrollMouse         from './components/ScrollMouse';
 import Magnet              from './components/ui/Magnet';
@@ -58,13 +58,12 @@ function ConfettiBurst() {
 }
 
 export default function App() {
-  const [introComplete, setIntroComplete] = useState(false);
+  const tier = usePerformanceTier();
+  const [introComplete, setIntroComplete] = useState(tier === 'low');
   const [confetti, setConfetti] = useState(false);
   const progressRef = useRef(null);
   const lenisRef    = useRef(null);
 
-  // Custom cursor
-  useCursor();
 
   // Scroll animations (runs after load)
   useScrollAnimation();
@@ -123,20 +122,17 @@ export default function App() {
           }
         }
       `}</style>
-      {/* Custom cursor elements */}
-      <div className="cursor-dot"  />
-      <div className="cursor-ring" />
 
       {/* Custom wired mouse progress indicator */}
       <ScrollMouse />
 
-      {/* Loader plays first */}
-      {!introComplete && (
+      {/* Loader plays first unless low tier */}
+      {!introComplete && tier !== 'low' && (
         <Loader onComplete={() => setIntroComplete(true)} />
       )}
 
       {/* Konami confetti */}
-      {confetti && <ConfettiBurst />}
+      {confetti && tier !== 'low' && <ConfettiBurst />}
 
       {/* Portfolio always rendered underneath, instantly ready when loader finishes */}
       <div style={{ 

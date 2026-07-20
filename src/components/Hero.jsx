@@ -4,6 +4,7 @@ import { useInView } from 'framer-motion';
 const ParticleField = lazy(() => import('../three/ParticleField'));
 import { Mail, ArrowDown, Eye } from 'lucide-react';
 import avatarImg from '../assets/avatar.webp';
+import { usePerformanceTier } from '../context/PerformanceContext';
 
 const ROLES = ['Full Stack Developer', 'Web Designer', 'Creative Technologist'];
 const NAME   = 'Hiran Antony R';
@@ -15,6 +16,7 @@ export default function Hero({ introComplete }) {
   const ctaRef       = useRef(null);
   const arrowRef     = useRef(null);
   const [roleIdx, setRoleIdx] = useState(0);
+  const tier = usePerformanceTier();
 
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "200px" });
@@ -83,7 +85,7 @@ export default function Hero({ introComplete }) {
       }}
     >
       {/* 3D Background */}
-      {isInView && introComplete && (
+      {isInView && introComplete && tier !== 'low' && (
         <Suspense fallback={<div style={{position: 'absolute', inset: 0, zIndex: 0, background: 'transparent'}} />}>
           <ParticleField />
         </Suspense>

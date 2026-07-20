@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { isMobile } from '../../utils/deviceUtils';
+import { usePerformanceTier } from '../../context/PerformanceContext';
 import { CERTS } from './certData';
 import MobileCertGrid from './MobileCertGrid';
 import CertDetails from './CertDetails';
@@ -23,6 +24,7 @@ export default function Certifications() {
   const [hintVisible, setHintVisible] = useState(true);
   const [shouldMountCanvas, setShouldMountCanvas] = useState(false);
   const [mobile, setMobile] = useState(isMobile);
+  const tier = usePerformanceTier();
 
   const sectionRef = useRef(null);
   const scrollProgressRef = useRef(0);
@@ -55,7 +57,7 @@ export default function Certifications() {
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section || mobile) return;
+    if (!section || mobile || tier === 'low') return;
 
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
@@ -81,7 +83,7 @@ export default function Certifications() {
     }, section);
 
     return () => ctx.revert();
-  }, [mobile]);
+  }, [mobile, tier]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -107,7 +109,7 @@ export default function Certifications() {
     <section
       ref={sectionRef}
       id="certifications"
-      className={`cert-gallery-section ${mobile ? 'cert-gallery-section--mobile' : 'cert-gallery-section--desktop'}`}
+      className={`cert-gallery-section ${(mobile || tier === 'low') ? 'cert-gallery-section--mobile' : 'cert-gallery-section--desktop'}`}
     >
       <div className="cert-gallery-header">
         <p className="section-label">06 — CERTIFICATIONS</p>
@@ -117,61 +119,62 @@ export default function Certifications() {
         <p className="section-subtitle">Scroll to explore the gallery</p>
       </div>
 
-      {!mobile && shouldMountCanvas && (
-        <Canvas
-          camera={{ position: [0, 0, 3], fov: 60 }}
-          gl={{ antialias: true, alpha: true }}
-          dpr={[1, 1.5]}
-        >
-          <Suspense fallback={null}>
-            <GalleryScene
-              scrollProgressRef={scrollProgressRef}
-              certificates={CERTS}
-              onCertClick={setLightboxImg}
-              onActiveCertChange={handleActiveCertChange}
-              mouseXRef={mouseXRef}
-              activeCert={activeCert}
-            />
-          </Suspense>
-        </Canvas>
-      )}
+        {!mobile && tier !== 'low' && shouldMountCanvas && (
+          <Canvas
+            camera={{ position: [0, 0, 3], fov: 60 }}
+            gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+            dpr={tier === 'medium' ? 1.5 : Math.min(window.devicePixelRatio, 2)}
+            frameloop="always" // Will be managed by visibility later if needed
+          >
+            <Suspense fallback={null}>
+              <GalleryScene
+                scrollProgressRef={scrollProgressRef}
+                certificates={CERTS}
+                onCertClick={setLightboxImg}
+                onActiveCertChange={handleActiveCertChange}
+                mouseXRef={mouseXRef}
+                activeCert={activeCert}
+              />
+            </Suspense>
+          </Canvas>
+        )}
 
-      {mobile && <MobileCertGrid certs={CERTS} onView={setLightboxImg} />}
+        {(mobile || tier === 'low') && <MobileCertGrid certs={CERTS} onView={setLightboxImg} />}
 
-      {!mobile && CERTS.map((cert, i) => (
-        <CertDetails
-          key={i}
-          cert={{...cert, index: i}}
-          isActive={activeCert === i}
-          isLeaving={prevCert === i && isTransitioning}
-          totalCerts={CERTS.length}
-          onView={setLightboxImg}
-        />
-      ))}
+        {!mobile && tier !== 'low' && CERTS.map((cert, i) => (
+          <CertDetails
+            key={i}
+            cert={{...cert, index: i}}
+            isActive={activeCert === i}
+            isLeaving={prevCert === i && isTransitioning}
+            totalCerts={CERTS.length}
+            onView={setLightboxImg}
+          />
+        ))}
 
-      {!mobile && (
-        <>
-          <div className="gallery-progress">
-            {CERTS.map((cert, i) => (
-              <div 
-                key={i} 
-                className={`gallery-dot-wrap ${activeCert === i ? 'active' : ''}`}
-                title={cert.title}
-              >
-                <div className="gallery-dot" />
-                {activeCert === i && (
-                  <span className="dot-label">{i + 1}</span>
-                )}
-              </div>
-            ))}
-          </div>
+        {!mobile && tier !== 'low' && (
+          <>
+            <div className="gallery-progress">
+              {CERTS.map((cert, i) => (
+                <div 
+                  key={i} 
+                  className={`gallery-dot-wrap ${activeCert === i ? 'active' : ''}`}
+                  title={cert.title}
+                >
+                  <div className="gallery-dot" />
+                  {activeCert === i && (
+                    <span className="dot-label">{i + 1}</span>
+                  )}
+                </div>
+              ))}
+            </div>
 
-          <div className="gallery-scroll-hint" style={{ opacity: hintVisible ? 1 : 0 }}>
-            <span>Scroll to explore</span>
-            <div className="scroll-arrow">↓</div>
-          </div>
-        </>
-      )}
+            <div className="gallery-scroll-hint" style={{ opacity: hintVisible ? 1 : 0 }}>
+              <span>Scroll to explore</span>
+              <div className="scroll-arrow">↓</div>
+            </div>
+          </>
+        )}
 
       <AnimatePresence>
         {lightboxImg && (

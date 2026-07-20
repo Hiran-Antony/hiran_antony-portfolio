@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import TechStarsOverlay from './TechStarsOverlay';
+import { getDeviceTier } from '../utils/deviceCapability';
 
 const PLANETS = [
   { name: 'Frontend',  skills: ['HTML','CSS','JavaScript'], color: '#E85D26', radius: 2.2, orbitR: 18, speed: 0.008, size: 2.0 },
@@ -63,6 +64,7 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
     if (navigator.userAgent.includes('Lighthouse')) return;
 
+    const tier = getDeviceTier();
     const isMobile = window.innerWidth < 768;
 
     const W = mount.clientWidth;
@@ -73,9 +75,9 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     camera.position.set(0, 30, 90);
     camera.lookAt(0, 0, 0);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: tier === 'high' });
     renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, tier === 'medium' ? 1.5 : (isMobile ? 1.5 : 2)));
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
@@ -92,7 +94,7 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     const sun = new THREE.Mesh(sunGeo, sunMat);
     scene.add(sun);
 
-    if (!isMobile) {
+    if (!isMobile && tier === 'high') {
       const glowGeo = new THREE.SphereGeometry(6.5, 32, 32);
       const glowMat = new THREE.MeshBasicMaterial({ color: 0xC9A96E, transparent: true, opacity: 0.12, side: THREE.BackSide });
       scene.add(new THREE.Mesh(glowGeo, glowMat));
@@ -132,7 +134,7 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     meshesRef.current = planetMeshes;
 
     // ── Stars ─────────────────────────────────────────
-    const starCount = isMobile ? 150 : 600;
+    const starCount = tier === 'medium' ? (isMobile ? 100 : 250) : (isMobile ? 150 : 600);
     const starPos   = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
       starPos[i*3]   = (Math.random() - 0.5) * 400;
@@ -197,13 +199,13 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     // ── Animate Loop ──────────────────────────────────
     let frameId;
     let lastRender = 0;
-    const fpsInterval = 1000 / 30; // 30 FPS target for mobile
+    const fpsInterval = tier === 'medium' ? 1000 / 30 : (isMobile ? 1000 / 30 : 0);
     const clock = new THREE.Clock();
 
     const animate = (time) => {
       frameId = requestAnimationFrame(animate);
 
-      if (isMobile) {
+      if (fpsInterval > 0) {
         if (time - lastRender < fpsInterval) return;
         lastRender = time;
       }
@@ -238,8 +240,6 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
       const intersects = raycaster.intersectObjects(planetMeshes);
 
       if (intersects.length > 0) {
-        const ring = document.querySelector('.cursor-ring');
-        if (ring) ring.classList.add('hovered');
         hoveredMesh = intersects[0].object;
         
         // Show subtle hover ring
@@ -250,8 +250,6 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
         hoverRing.scale.setScalar(hoveredMesh.userData.planet.size * scaleBase * 1.3);
         hoverRing.visible = true;
       } else {
-        const ring = document.querySelector('.cursor-ring');
-        if (ring) ring.classList.remove('hovered');
         hoveredMesh = null;
         hoverRing.visible = false;
       }
@@ -287,8 +285,6 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
       return () => {
         if (frameId) cancelAnimationFrame(frameId);
         observer.disconnect();
-        const ring = document.querySelector('.cursor-ring');
-        if (ring) ring.classList.remove('hovered');
         mount.removeEventListener('mousemove', onMouseMove);
         mount.removeEventListener('click', onClick);
         window.removeEventListener('resize', onResize);

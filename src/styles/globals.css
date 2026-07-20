@@ -8,7 +8,6 @@
   box-sizing: border-box; 
   margin: 0; 
   padding: 0; 
-  cursor: none !important; 
 }
 
 html {
@@ -24,7 +23,6 @@ body {
   font-family: var(--font-body);
   line-height: 1.6;
   overflow-x: hidden;
-  cursor: none !important; /* Custom cursor replaces */
 }
 
 /* ─── Grain texture overlay ──────────────────────────────── */
@@ -50,39 +48,6 @@ body::before {
 
 
 
-/* ─── Custom Cursor ──────────────────────────────────────── */
-.cursor-dot {
-  position: fixed;
-  width: 8px; height: 8px;
-  background: var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 99999;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 12px 4px rgba(201,169,110,0.6);
-  transition: transform 0.1s var(--ease-smooth), opacity 0.2s;
-}
-.cursor-ring {
-  position: fixed;
-  width: 28px; height: 28px;
-  border: 1.5px solid rgba(201,169,110,0.55);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 99998;
-  transform: translate(-50%, -50%);
-  transition: transform 0.18s var(--ease-smooth), width 0.3s var(--ease-spring), height 0.3s var(--ease-spring), opacity 0.2s;
-}
-.cursor-ring.hovered { width: 46px; height: 46px; border-color: var(--gold); }
-.cursor-dot.clicking { transform: translate(-50%,-50%) scale(0.6); }
-
-@media (max-width: 768px), (pointer: coarse) {
-  .cursor-dot, .cursor-ring {
-    display: none !important;
-  }
-  * {
-    cursor: auto !important;
-  }
-}
 
 /* ─── Typography helpers ─────────────────────────────────── */
 .font-display { font-family: var(--font-display); }

@@ -9,29 +9,30 @@ export default function Experience() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      gsap.from(".exp-panels", {
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        ease: "power3.out",
+      // Use a timeline for better performance (one ScrollTrigger instead of two)
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: ".exp-panels",
-          start: "top 75%"
+          start: "top 75%",
+          // Prevent it from re-triggering if not needed, or let it play once cleanly
+          toggleActions: "play none none none" 
         }
       });
 
-      gsap.from(".exp-panel", {
+      tl.from(".exp-panels", {
+        opacity: 0,
+        y: 40,
+        duration: 0.6,
+        ease: "power3.out"
+      })
+      .from(".exp-panel", {
         opacity: 0,
         x: (i) => i === 0 ? -30 : 30,
-        duration: 0.7,
-        delay: 0.2,
+        duration: 0.6,
         stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".exp-panels",
-          start: "top 75%"
-        }
-      });
+        ease: "power3.out"
+      }, "-=0.4"); // Overlap to make it snappy and seamless
+
     }, sectionRef);
 
     return () => ctx.revert();

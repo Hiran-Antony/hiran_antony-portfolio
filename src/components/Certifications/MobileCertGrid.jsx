@@ -63,10 +63,15 @@ function MobileCertCard({ cert, index, onView }) {
 
 export default function MobileCertGrid({ certs, onView }) {
   return (
-    <div className="mobile-certs-grid">
-      {certs.map((cert, i) => (
-        <MobileCertCard key={cert.title} cert={cert} index={i} onView={onView} />
-      ))}
+    <div className="mobile-certs-wrapper">
+      <div className="mobile-certs-grid">
+        {certs.map((cert, i) => (
+          <MobileCertCard key={cert.title} cert={cert} index={i} onView={onView} />
+        ))}
+      </div>
+      <div className="swipe-hint">
+        <span>← Swipe to explore →</span>
+      </div>
     </div>
   );
 }

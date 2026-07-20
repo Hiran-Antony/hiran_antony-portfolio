@@ -259,17 +259,34 @@
 }
 
 /* Mobile grid */
+.mobile-certs-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 120px 20px 20px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+}
+.mobile-certs-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
 .mobile-certs-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  max-width: 600px;
-  margin: 0 auto;
-  padding-top: 180px;
-  padding-bottom: 60px;
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  margin: 0;
+  /* Add padding to the right so the last card doesn't stick to the edge */
+  padding-right: 20px;
 }
 
 .mobile-cert-card {
+  width: 300px;
+  flex-shrink: 0;
+  scroll-snap-align: center;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -278,6 +295,22 @@
   padding: 20px;
   position: relative;
   overflow: hidden;
+}
+
+.swipe-hint {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(201,169,110,0.6);
+  margin-top: 24px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: pulse-hint 2s infinite ease-in-out;
+}
+
+@keyframes pulse-hint {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 .mobile-cert-card.featured {

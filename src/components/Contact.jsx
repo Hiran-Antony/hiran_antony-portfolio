@@ -4,6 +4,7 @@ import { Mail, Phone, GitBranch, Send, MapPin } from 'lucide-react';
 const WormholePortal = lazy(() => import('../three/WormholePortal'));
 import { ParticleRain } from './Certifications';
 import { isMobile } from '../utils/deviceUtils';
+import { usePerformanceTier } from '../context/PerformanceContext';
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -22,6 +23,7 @@ export default function Contact() {
   const [sent, setSent]         = useState(false);
   const [burst, setBurst]       = useState(false);
   const btnRef = useRef(null);
+  const tier = usePerformanceTier();
   
   const sectionRef = useRef(null);
   const shouldMount = useInView(sectionRef, { once: true, margin: "300px" });
@@ -60,6 +62,10 @@ ${form.message}`;
 
   useEffect(() => {
     const mobile = isMobile();
+    const scrubValue = tier === 'low' ? false : (mobile ? 0.5 : 1.5);
+    const scrubValueFast = tier === 'low' ? false : (mobile ? 0.5 : 1.2);
+    const scrubValueSlow = tier === 'low' ? false : (mobile ? 0.5 : 1);
+
     if (mobile) {
       gsap.globalTimeline.timeScale(1.5);
     }
@@ -83,8 +89,8 @@ ${form.message}`;
           trigger: ".contact-left",
           start: "top 80%",
           end: "top 30%",
-          scrub: mobile ? 0.5 : 1.5,
-          toggleActions: "play reverse play reverse"
+          scrub: scrubValue,
+          toggleActions: tier === 'low' ? "play none none reverse" : "play reverse play reverse"
         }
       }
     );
@@ -105,8 +111,8 @@ ${form.message}`;
           trigger: ".contact-form-card",
           start: "top 80%",
           end: "top 25%",
-          scrub: mobile ? 0.5 : 1.5,
-          toggleActions: "play reverse play reverse"
+          scrub: scrubValue,
+          toggleActions: tier === 'low' ? "play none none reverse" : "play reverse play reverse"
         }
       }
     );
@@ -127,8 +133,8 @@ ${form.message}`;
           trigger: ".contact-form-card",
           start: "top 70%",
           end: "top 15%",
-          scrub: mobile ? 0.5 : 1.2,
-          toggleActions: "play reverse play reverse"
+          scrub: scrubValueFast,
+          toggleActions: tier === 'low' ? "play none none reverse" : "play reverse play reverse"
         }
       }
     );
@@ -149,8 +155,8 @@ ${form.message}`;
           trigger: ".contact-section",
           start: "top 75%",
           end: "top 40%",
-          scrub: mobile ? 0.5 : 1,
-          toggleActions: "play reverse play reverse"
+          scrub: scrubValueSlow,
+          toggleActions: tier === 'low' ? "play none none reverse" : "play reverse play reverse"
         }
       }
     );
@@ -170,8 +176,8 @@ ${form.message}`;
           trigger: ".contact-social-icons",
           start: "top 90%",
           end: "top 60%",
-          scrub: mobile ? 0.5 : 1,
-          toggleActions: "play reverse play reverse"
+          scrub: scrubValueSlow,
+          toggleActions: tier === 'low' ? "play none none reverse" : "play reverse play reverse"
         }
       }
     );
@@ -195,14 +201,14 @@ ${form.message}`;
       }}
     >
       {/* Wormhole portal background */}
-      {!isMobile() ? (
+      {(!isMobile() && tier !== 'low') ? (
         <WormholePortal />
       ) : (
         <div className="mobile-contact-bg" />
       )}
 
       {/* Gold particle rain */}
-      {!isMobile() && <ParticleRain count={60} />}
+      {(!isMobile() && tier !== 'low') && <ParticleRain count={tier === 'medium' ? 30 : 60} />}
 
       {/* Dark overlay so text is readable */}
       <div style={{

@@ -1,25 +1,27 @@
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { usePerformanceTier } from '../../context/PerformanceContext';
 
 export default function GoldenDust() {
   const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const rainCount = isMobile ? 80 : 350;
-  const moteCount = isMobile ? 60 : 250;
+  const tier = usePerformanceTier();
+
+  const rainCount = tier === 'medium' ? (isMobile ? 50 : 150) : (isMobile ? 80 : 350);
+  const moteCount = tier === 'medium' ? (isMobile ? 30 : 100) : (isMobile ? 60 : 250);
 
   // Layer 1 - Falling Golden Rain
   const rainPositions = useMemo(() => {
-    const positions = new Float32Array(350 * 3);
-    const speeds = new Float32Array(350);
-    for (let i = 0; i < 350; i++) {
+    const positions = new Float32Array(rainCount * 3);
+    const speeds = new Float32Array(rainCount);
+    for (let i = 0; i < rainCount; i++) {
       positions[i*3] = (Math.random()-0.5) * 18;
       positions[i*3+1] = Math.random() * 12 - 2;
       positions[i*3+2] = (Math.random()-0.5) * 28 - 10;
@@ -49,8 +51,8 @@ export default function GoldenDust() {
 
   // Layer 2 - Floating Fine Motes
   const motePositions = useMemo(() => {
-    const positions = new Float32Array(250 * 3);
-    for (let i = 0; i < 250; i++) {
+    const positions = new Float32Array(moteCount * 3);
+    for (let i = 0; i < moteCount; i++) {
       positions[i*3] = (Math.random()-0.5) * 16;
       positions[i*3+1] = (Math.random()-0.5) * 9;
       positions[i*3+2] = (Math.random()-0.5) * 28 - 12;
@@ -86,7 +88,7 @@ export default function GoldenDust() {
     [5, 2, -5], [-5, 1.5, -9], [4, -1.5, -13],
     [-4, 2, -17], [5, -0.5, -21]
   ];
-  const bokehPositions = isMobile ? bokehPositionsBase.slice(0, 2) : bokehPositionsBase;
+  const bokehPositions = tier === 'medium' ? bokehPositionsBase.slice(0, 2) : (isMobile ? bokehPositionsBase.slice(0, 2) : bokehPositionsBase);
 
   const bokehRefs = useRef([]);
 

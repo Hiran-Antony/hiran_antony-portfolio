@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 const SolarSystem = lazy(() => import('../three/SolarSystem'));
+import SkillsSimpleFallback from './SkillsSimpleFallback';
+import { usePerformanceTier } from '../context/PerformanceContext';
 import nebulaBg from '../assets/skills-nebula.jpeg';
 
 const SKILL_CATEGORIES = [
@@ -12,6 +14,7 @@ const SKILL_CATEGORIES = [
 ];
 
 export default function Skills() {
+  const tier = usePerformanceTier();
   const containerRef = useRef(null);
   const mountRef = useRef(null);
   const isInView = useInView(containerRef, { amount: 0.2 }); // Trigger when 20% visible
@@ -72,9 +75,9 @@ export default function Skills() {
     >
       <div ref={mountRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
 
-      {/* 3D Solar System */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-        {shouldMount && (
+      {/* 3D Solar System (Mid/High tier) or 2D Fallback (Low tier) */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', flexDirection: 'column' }}>
+        {shouldMount && tier !== 'low' && (
           <Suspense fallback={<div style={{ width: '100%', height: '100%' }} />}>
             <SolarSystem 
               focusedIdx={focusedIdx} 
@@ -83,125 +86,132 @@ export default function Skills() {
             />
           </Suspense>
         )}
+        {tier === 'low' && <SkillsSimpleFallback />}
       </div>
 
-      {/* Overlay content */}
-      <div className="container" style={{ position: 'relative', zIndex: 2, pointerEvents: 'none' }}>
-        <div className="reveal" style={{ marginBottom: '2rem', textAlign: 'center' }}>
-          <p className="section-label" style={{ color: 'var(--gold)' }}>03 &mdash; Skills</p>
-          <h2 className="section-title light">My Skill <span className="text-gradient">Universe</span></h2>
-          <p style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '1rem',
-            color: 'rgba(232,213,176,0.65)',
-            marginTop: '0.75rem',
-            fontStyle: 'italic',
-          }}>
-            Watch the system rotate or click a category to explore
-          </p>
-        </div>
-      </div>
-
-      {/* Info Card Centered Below */}
-      <div className="skills-info-card" style={{
-        position: 'absolute',
-        bottom: '15%',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 10,
-        width: '280px',
-        height: '140px', // Prevents layout shift during crossfade
-      }}>
-        <AnimatePresence mode="wait">
-          {isFocused && (
-            <motion.div
-              key={focusedIdx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 15 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-              style={{
-                background: 'transparent',
-                border: '1px solid rgba(201,169,110,0.25)',
-                borderRadius: '16px',
-                padding: '20px 24px',
-                width: '100%',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <div style={{ 
-                  width: 10, height: 10, borderRadius: '50%', 
-                  background: SKILL_CATEGORIES[focusedIdx].color, 
-                  boxShadow: `0 0 10px ${SKILL_CATEGORIES[focusedIdx].color}` 
-                }} />
-                <h3 style={{ fontFamily: 'var(--font-display)', color: 'var(--gold)', fontSize: '18px', fontWeight: 600, margin: 0 }}>
-                  {SKILL_CATEGORIES[focusedIdx].name}
-                </h3>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {SKILL_CATEGORIES[focusedIdx].skills.map(skill => (
-                  <span key={skill} style={{
-                    background: 'rgba(250,247,242,0.1)',
-                    color: 'var(--cream)',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '12px',
-                    padding: '4px 10px',
-                    borderRadius: '999px',
-                  }}>
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Legend / Manual Selectors */}
-      <div className="skills-selectors" style={{
-        position: 'absolute',
-        bottom: '3rem',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 12,
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: '0.75rem',
-      }}>
-        {SKILL_CATEGORIES.map((cat, i) => {
-          const active = isFocused && focusedIdx === i;
-          return (
-            <div
-              key={cat.name}
-              className="skill-cat-btn"
-              onClick={() => handleManualSelect(i)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                background: active ? 'var(--gold)' : 'rgba(61,43,31,0.7)',
-                backdropFilter: 'blur(12px)',
-                border: `1px solid ${active ? 'var(--gold)' : cat.color + '40'}`,
-                borderRadius: '999px',
-                padding: '0.35rem 0.9rem',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.72rem',
-                color: active ? 'var(--espresso)' : cat.color,
-                transition: 'all 0.3s ease',
-              }}
-            >
-              <div style={{ 
-                width: 8, height: 8, borderRadius: '50%', 
-                background: active ? 'var(--espresso)' : cat.color,
-                transition: 'all 0.3s ease',
-              }} />
-              {cat.name}
+      {/* Overlay content (only show on 3D version) */}
+      {tier !== 'low' && (
+        <>
+          <div className="container" style={{ position: 'relative', zIndex: 2, pointerEvents: 'none' }}>
+            <div className="reveal" style={{ marginBottom: '2rem', textAlign: 'center' }}>
+              <p className="section-label" style={{ color: 'var(--gold)' }}>03 &mdash; Skills</p>
+              <h2 className="section-title light">My Skill <span className="text-gradient">Universe</span></h2>
+              <p style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '1rem',
+                color: 'rgba(232,213,176,0.65)',
+                marginTop: '0.75rem',
+                fontStyle: 'italic',
+              }}>
+                Watch the system rotate or click a category to explore
+              </p>
             </div>
-          );
-        })}
-      </div>
+          </div>
+
+          {/* Info Card Centered Below */}
+          <div className="skills-info-card" style={{
+            position: 'absolute',
+            bottom: '15%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10,
+            width: '280px',
+            height: '140px', // Prevents layout shift during crossfade
+          }}>
+            <AnimatePresence mode="wait">
+              {isFocused && (
+                <motion.div
+                  key={focusedIdx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(201,169,110,0.25)',
+                    borderRadius: '16px',
+                    padding: '20px 24px',
+                    width: '100%',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                    <div style={{ 
+                      width: 10, height: 10, borderRadius: '50%', 
+                      background: SKILL_CATEGORIES[focusedIdx].color, 
+                      boxShadow: `0 0 10px ${SKILL_CATEGORIES[focusedIdx].color}` 
+                    }} />
+                    <h3 style={{ fontFamily: 'var(--font-display)', color: 'var(--gold)', fontSize: '18px', fontWeight: 600, margin: 0 }}>
+                      {SKILL_CATEGORIES[focusedIdx].name}
+                    </h3>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {SKILL_CATEGORIES[focusedIdx].skills.map(skill => (
+                      <span key={skill} style={{
+                        background: 'rgba(250,247,242,0.1)',
+                        color: 'var(--cream)',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '12px',
+                        padding: '4px 10px',
+                        borderRadius: '999px',
+                      }}>
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </>
+      )}
+
+      {/* Legend / Manual Selectors (only on 3D version) */}
+      {tier !== 'low' && (
+        <div className="skills-selectors" style={{
+          position: 'absolute',
+          bottom: '3rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 12,
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: '0.75rem',
+        }}>
+          {SKILL_CATEGORIES.map((cat, i) => {
+            const active = isFocused && focusedIdx === i;
+            return (
+              <div
+                key={cat.name}
+                className="skill-cat-btn"
+                onClick={() => handleManualSelect(i)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  background: active ? 'var(--gold)' : 'rgba(61,43,31,0.7)',
+                  backdropFilter: 'blur(12px)',
+                  border: `1px solid ${active ? 'var(--gold)' : cat.color + '40'}`,
+                  borderRadius: '999px',
+                  padding: '0.35rem 0.9rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.72rem',
+                  color: active ? 'var(--espresso)' : cat.color,
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                <div style={{ 
+                  width: 8, height: 8, borderRadius: '50%', 
+                  background: active ? 'var(--espresso)' : cat.color,
+                  transition: 'all 0.3s ease',
+                }} />
+                {cat.name}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <style>{`
         .skills-section {
