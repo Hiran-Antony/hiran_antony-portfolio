@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 const SolarSystem = lazy(() => import('../three/SolarSystem'));
 import SkillsSimpleFallback from './SkillsSimpleFallback';
 import { usePerformanceTier } from '../context/PerformanceContext';
-import nebulaBg from '../assets/skills-nebula.jpeg';
+import nebulaBg from '../assets/skills-nebula.webp';
 
 const SKILL_CATEGORIES = [
   { name: 'Frontend',  color: '#E85D26', skills: ['HTML5','CSS3','JavaScript','Responsive Design'] },
@@ -20,11 +20,24 @@ export default function Skills() {
   const isInView = useInView(containerRef, { amount: 0.2 }); // Trigger when 20% visible
   
   const [shouldMount, setShouldMount] = useState(false);
+  
   useEffect(() => {
-    // Pre-compile heavy WebGL shaders 3.5s after page load (while user is reading Hero section)
-    // This completely prevents it from interrupting any scroll animations!
-    const timer = setTimeout(() => setShouldMount(true), 3500);
-    return () => clearTimeout(timer);
+    // Only load the massive Three.js bundle when the user scrolls near the Skills section
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldMount(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '800px' } // Trigger when within 800px of viewport
+    );
+    
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    
+    return () => observer.disconnect();
   }, []);
 
   const [focusedIdx, setFocusedIdx] = useState(0);

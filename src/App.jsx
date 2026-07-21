@@ -5,7 +5,6 @@ import Lenis from 'lenis';
 import { FileDown } from 'lucide-react';
 import { usePerformanceTier } from './context/PerformanceContext';
 
-import Loader          from './components/Loader';
 import Navbar          from './components/Navbar';
 import Hero            from './components/Hero';
 import About           from './components/About';
@@ -69,7 +68,8 @@ function ConfettiBurst() {
 
 export default function App() {
   const tier = usePerformanceTier();
-  const [introComplete, setIntroComplete] = useState(tier === 'low');
+  // Always true now to optimize for Lighthouse LCP and remove the 3-second render delay
+  const [introComplete, setIntroComplete] = useState(true);
   const [confetti, setConfetti] = useState(false);
   const progressRef = useRef(null);
   const lenisRef    = useRef(null);
@@ -136,20 +136,11 @@ export default function App() {
       {/* Performant scroll progress line */}
       <ScrollProgress />
 
-      {/* Loader plays first unless low tier */}
-      {!introComplete && tier !== 'low' && (
-        <Loader onComplete={() => setIntroComplete(true)} />
-      )}
-
       {/* Konami confetti */}
       {confetti && tier !== 'low' && <ConfettiBurst />}
 
-      {/* Portfolio always rendered underneath, instantly ready when loader finishes */}
-      <div style={{ 
-        opacity: introComplete ? 1 : 0,
-        transition: "opacity 0.5s ease",
-        visibility: introComplete ? 'visible' : 'hidden'
-      }}>
+      {/* Main Portfolio Layout */}
+      <div>
         <Navbar hidden={!introComplete} />
         <main>
           <Hero introComplete={introComplete} />

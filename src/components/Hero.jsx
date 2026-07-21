@@ -24,25 +24,31 @@ export default function Hero({ introComplete }) {
   // Initial Entry Animations
   useEffect(() => {
     if (!introComplete) return;
-    const letters = lettersRef.current.filter(Boolean);
-    gsap.fromTo(
-      letters,
-      { opacity: 0, y: -60, rotateX: -90 },
-      {
-        opacity: 1, y: 0, rotateX: 0,
-        duration: 0.9,
-        stagger: 0.08,
-        ease: 'back.out(1.5)',
-        delay: 0.4,
-      }
-    );
+    
+    // Defer animation very slightly to ensure browser has painted the initial frame
+    setTimeout(() => {
+      const letters = lettersRef.current.filter(Boolean);
+      
+      // Restored original 3D bounce, but highly optimized and instant
+      gsap.fromTo(
+        letters,
+        { opacity: 0, y: -60, rotateX: -90 },
+        {
+          opacity: 1, y: 0, rotateX: 0,
+          duration: 0.9,
+          stagger: 0.06, // slightly faster stagger
+          ease: 'back.out(1.5)',
+          force3D: true, // hardware acceleration
+        }
+      );
 
-    // Bio + CTA fade-in
-    gsap.fromTo(
-      [bioRef.current, ctaRef.current],
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 1.4, stagger: 0.2 }
-    );
+      // Bio + CTA fade-in
+      gsap.fromTo(
+        [bioRef.current, ctaRef.current],
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.6, stagger: 0.2, force3D: true }
+      );
+    }, 50);
 
     // Arrow bounce
     gsap.to(arrowRef.current, {
@@ -124,10 +130,10 @@ export default function Hero({ introComplete }) {
           {NAME.split('').map((char, i) => (
             <span
               key={i}
-              ref={el => lettersRef.current[i] = el}
+              ref={char === ' ' ? null : el => lettersRef.current[i] = el}
               style={{
                 display: 'inline-block',
-                opacity: 0,
+                opacity: char === ' ' ? 1 : 0,
                 color: char === 'H' || char === 'A' ? 'var(--gold)' : 'var(--espresso)',
               }}
             >
