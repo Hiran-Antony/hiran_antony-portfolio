@@ -56,25 +56,29 @@ export default function About() {
 
   useEffect(() => {
     // Terminal type-in per line
-    const lines = linesRef.current.filter(Boolean);
-    lines.forEach((line, i) => {
+    const ctx = gsap.context(() => {
+      const lines = linesRef.current.filter(Boolean);
+      if (lines.length === 0) return;
+      
       gsap.fromTo(
-        line,
+        lines,
         { opacity: 0, x: -20 },
         {
           opacity: 1, x: 0,
           duration: 0.5,
           ease: 'power2.out',
           force3D: true,
+          stagger: 0.08,
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top 70%',
             once: true,
-          },
-          delay: i * 0.08,
+          }
         }
       );
-    });
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
