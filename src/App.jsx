@@ -17,7 +17,7 @@ import Certifications  from './components/Certifications';
 import Contact         from './components/Contact';
 
 import useScrollAnimation  from './hooks/useScrollAnimation';
-import ScrollMouse         from './components/ScrollMouse';
+import ScrollProgress      from './components/ScrollProgress';
 import Magnet              from './components/ui/Magnet';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -94,7 +94,7 @@ export default function App() {
 
   // Lenis smooth scroll
   useEffect(() => {
-    if (!introComplete) return;
+    if (!introComplete || tier !== 'high') return;
     let lenis;
     const initLenis = () => {
       lenis = new Lenis({
@@ -133,8 +133,8 @@ export default function App() {
         }
       `}</style>
 
-      {/* Custom wired mouse progress indicator */}
-      <ScrollMouse />
+      {/* Performant scroll progress line */}
+      <ScrollProgress />
 
       {/* Loader plays first unless low tier */}
       {!introComplete && tier !== 'low' && (
