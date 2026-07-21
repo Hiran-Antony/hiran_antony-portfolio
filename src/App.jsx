@@ -21,6 +21,16 @@ import ScrollMouse         from './components/ScrollMouse';
 import Magnet              from './components/ui/Magnet';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({
+  limitCallbacks: true,
+  ignoreMobileResize: true,
+});
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+  });
+}
 
 // ── Scroll Trigger for Confetti ──────────────────────────────
 function ConfettiBurst() {

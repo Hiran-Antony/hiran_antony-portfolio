@@ -41,25 +41,28 @@ export default function Education() {
   const cardRefs   = useRef([]);
 
   useEffect(() => {
-    cardRefs.current.forEach((card, i) => {
-      if (!card) return;
-      gsap.fromTo(
-        card,
-        { opacity: 0, x: i % 2 === 0 ? -60 : 60, scale: 0.95 },
-        {
-          opacity: 1, x: 0, scale: 1,
-          duration: 0.8,
-          ease: 'power3.out',
-          force3D: true,
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 82%',
-            once: true,
-          },
-          delay: i * 0.12,
-        }
-      );
-    });
+    const ctx = gsap.context(() => {
+      cardRefs.current.forEach((card, i) => {
+        if (!card) return;
+        gsap.fromTo(
+          card,
+          { opacity: 0, x: i % 2 === 0 ? -60 : 60, scale: 0.95 },
+          {
+            opacity: 1, x: 0, scale: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            force3D: true,
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 82%',
+              once: true,
+            }
+          }
+        );
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (

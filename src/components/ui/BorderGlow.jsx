@@ -1,4 +1,5 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
+import { usePerformanceTier } from '../../context/PerformanceContext';
 import './BorderGlow.css';
 
 function parseHSL(hslStr) {
@@ -95,23 +96,51 @@ const BorderGlow = ({
     return degrees;
   }, [getCenterOfElement]);
 
-  const handlePointerMove = useCallback((e) => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const edge = getEdgeProximity(card, x, y);
-    const angle = getCursorAngle(card, x, y);
-
-    card.style.setProperty('--edge-proximity', `${(edge * 100).toFixed(3)}`);
-    card.style.setProperty('--cursor-angle', `${angle.toFixed(3)}deg`);
-  }, [getEdgeProximity, getCursorAngle]);
+  const tier = usePerformanceTier();
+  const [isVisible, setIsVisible] = useState(false);
+  const tickingRef = useRef(false);
 
   useEffect(() => {
-    if (!animated || !cardRef.current) return;
+    if (tier === 'low') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, [tier]);
+
+  const handlePointerMove = useCallback((e) => {
+    if (tier === 'low' || !isVisible) return;
+    
+    if (!tickingRef.current) {
+      requestAnimationFrame(() => {
+        const card = cardRef.current;
+        if (!card) {
+          tickingRef.current = false;
+          return;
+        }
+
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const edge = getEdgeProximity(card, x, y);
+        const angle = getCursorAngle(card, x, y);
+
+        card.style.setProperty('--edge-proximity', `${(edge * 100).toFixed(3)}`);
+        card.style.setProperty('--cursor-angle', `${angle.toFixed(3)}deg`);
+        
+        tickingRef.current = false;
+      });
+      tickingRef.current = true;
+    }
+  }, [getEdgeProximity, getCursorAngle, isVisible, tier]);
+
+
+
+  useEffect(() => {
+    if (!animated || !cardRef.current || tier === 'low') return;
     const card = cardRef.current;
     const angleStart = 110;
     const angleEnd = 465;
@@ -137,7 +166,7 @@ const BorderGlow = ({
     <div
       ref={cardRef}
       onPointerMove={handlePointerMove}
-      className={`border-glow-card ${className}`}
+      className={`border-glow-card ${className} ${tier === 'low' ? 'low-tier-static' : ''}`}
       style={{
         '--card-bg': backgroundColor,
         '--edge-sensitivity': edgeSensitivity,

@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import projectsBgImg from '../assets/projects-bg.webp';
+import { usePerformanceTier } from '../context/PerformanceContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,6 +11,7 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const tier = usePerformanceTier();
 
   const handleScroll = (e) => {
     const track = e.target;
@@ -91,10 +93,21 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
             trigger: section,
             start: "top top",
             end: () => "+=" + getScrollAmount(),
-            scrub: true,
+            scrub: tier === 'low' ? 0.5 : 1.2,
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            onEnter: () => {
+              if (tier !== 'low') {
+                gsap.set(".proj-card-shell", { willChange: "transform" });
+              }
+            },
+            onLeave: () => {
+              gsap.set(".proj-card-shell", { willChange: "auto" });
+            },
+            onLeaveBack: () => {
+              gsap.set(".proj-card-shell", { willChange: "auto" });
+            }
           },
         });
 
