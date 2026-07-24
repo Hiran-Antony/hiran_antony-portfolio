@@ -111,25 +111,7 @@ export default function ProjectsCarousel({ projects, renderCard, header }) {
           },
         });
 
-        // Subtle emphasis on whichever card is centered — driven by
-        // the same scroll, not a separate trigger. Content opacity
-        // never drops below 0.85, so nothing ever looks "empty".
-        const updateEmphasis = () => {
-          const viewportCenter = window.innerWidth / 2;
-          cards.forEach((card) => {
-            const rect = card.getBoundingClientRect();
-            const cardCenter = rect.left + rect.width / 2;
-            const distance = Math.abs(cardCenter - viewportCenter);
-            const proximity = gsap.utils.clamp(0, 1, 1 - distance / viewportCenter);
-            gsap.set(card, {
-              scale: gsap.utils.interpolate(0.94, 1, proximity),
-              opacity: gsap.utils.interpolate(0.85, 1, proximity),
-            });
-          });
-        };
 
-        tween.eventCallback("onUpdate", updateEmphasis);
-        updateEmphasis();
 
         return () => {
           tween.scrollTrigger?.kill();

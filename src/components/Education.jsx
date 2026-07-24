@@ -38,23 +38,24 @@ const EDU_ITEMS = [
 
 export default function Education() {
   const sectionRef = useRef(null);
-  const cardRefs   = useRef([]);
+  const leftRefs = useRef([]);
+  const rightRefs = useRef([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      cardRefs.current.forEach((card, i) => {
-        if (!card) return;
+      const elements = [...leftRefs.current, ...rightRefs.current].filter(Boolean);
+      elements.forEach((el) => {
         gsap.fromTo(
-          card,
-          { opacity: 0, y: 40 },
+          el,
+          { opacity: 0, y: 30 },
           {
             opacity: 1, y: 0,
-            duration: 0.8,
+            duration: 0.7,
             ease: 'power3.out',
             force3D: true,
             scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
+              trigger: el,
+              start: 'top 90%',
               once: true,
             }
           }
@@ -104,19 +105,21 @@ export default function Education() {
             return (
               <div
                 key={i}
-                ref={el => cardRefs.current[i] = el}
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 60px 1fr',
                   alignItems: 'center',
                   marginBottom: '3.5rem',
                   gap: '0',
-                  willChange: 'transform, opacity',
                 }}
                 className="edu-timeline-row"
               >
                 {/* Left content */}
-                <div className="edu-col-left" style={{ textAlign: 'right', paddingRight: '2rem' }}>
+                <div 
+                  className="edu-col-left" 
+                  ref={el => leftRefs.current[i] = el}
+                  style={{ textAlign: 'right', paddingRight: '2rem' }}
+                >
                   {isLeft ? (
                     <EduCard item={item} />
                   ) : (
@@ -155,7 +158,11 @@ export default function Education() {
                 </div>
 
                 {/* Right content */}
-                <div className="edu-col-right" style={{ paddingLeft: '2rem' }}>
+                <div 
+                  className="edu-col-right" 
+                  ref={el => rightRefs.current[i] = el}
+                  style={{ paddingLeft: '2rem' }}
+                >
                   {isLeft ? (
                     <YearBadge year={item.year} color={item.color} align="left" />
                   ) : (
