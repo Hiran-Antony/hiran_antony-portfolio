@@ -132,6 +132,8 @@ export default function Projects() {
 
         /* Card Sizing: Auto height on mobile to prevent clipping, fixed height on desktop for uniformity */
         .proj-card-shell {
+          contain: layout style paint;
+          content-visibility: auto;
           height: auto;
           min-height: 410px;
           /* Reverted to a high-transparency background for a faux-glass effect without the expensive blur */

@@ -180,7 +180,11 @@ export default function Education() {
           0%, 100% { transform: scale(1); opacity: 0.3; }
           50%       { transform: scale(1.35); opacity: 0; }
         }
+        .edu-col-left, .edu-col-right {
+          will-change: transform, opacity;
+        }
         .edu-card {
+          contain: layout style paint;
           transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;
         }
         .edu-card:hover {

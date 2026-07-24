@@ -17,7 +17,7 @@ export default function ParticleField() {
     camera.position.z = 80;
 
     const isMobile = window.innerWidth < 768;
-    const COUNT = isMobile ? 25 : 60;
+    const COUNT = isMobile ? 35 : 85;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(mount.clientWidth, mount.clientHeight);
