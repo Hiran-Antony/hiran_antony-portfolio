@@ -134,9 +134,8 @@ export default function Projects() {
         .proj-card-shell {
           height: auto;
           min-height: 410px;
-          background: rgba(255, 255, 255, 0.02) !important;
-          backdrop-filter: blur(16px) !important;
-          -webkit-backdrop-filter: blur(16px) !important;
+          /* Reverted to a high-transparency background for a faux-glass effect without the expensive blur */
+          background: rgba(0, 0, 0, 0.4) !important;
           transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.4s cubic-bezier(0.33, 1, 0.68, 1);
         }
         

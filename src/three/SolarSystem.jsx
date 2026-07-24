@@ -30,11 +30,13 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     if (isFocused) {
       // 1. Focus active planet, dim others
       meshesRef.current.forEach((mesh, i) => {
+        const baseScale = mesh.userData.planet.size;
         if (i === focusedIdx) {
-          gsap.to(mesh.scale, { x: 1.35, y: 1.35, z: 1.35, duration: 0.6, ease: 'back.out(1.5)' });
+          const targetScale = baseScale * 1.35;
+          gsap.to(mesh.scale, { x: targetScale, y: targetScale, z: targetScale, duration: 0.6, ease: 'back.out(1.5)' });
           gsap.to(mesh.material, { emissiveIntensity: 0.8, opacity: 1, duration: 0.4 });
         } else {
-          gsap.to(mesh.scale, { x: 1.0, y: 1.0, z: 1.0, duration: 0.4 });
+          gsap.to(mesh.scale, { x: baseScale, y: baseScale, z: baseScale, duration: 0.4 });
           gsap.to(mesh.material, { emissiveIntensity: 0.1, opacity: 0.5, duration: 0.4 });
         }
       });
@@ -48,8 +50,9 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     } else {
       // Return to normal/idle
       meshesRef.current.forEach((mesh) => {
-        gsap.to(mesh.scale, { x: 1.0, y: 1.0, z: 1.0, duration: 0.4 });
-        gsap.to(mesh.material, { emissiveIntensity: 0.25, opacity: 1, duration: 0.4 });
+        const baseScale = mesh.userData.planet.size;
+        gsap.to(mesh.scale, { x: baseScale, y: baseScale, z: baseScale, duration: 0.4 });
+        gsap.to(mesh.material, { emissiveIntensity: 0.35, opacity: 1, duration: 0.4 });
       });
       // Speed up
       gsap.to(speedRef.current, { value: 1.0, duration: 0.5, ease: 'power2.inOut' });
@@ -77,19 +80,22 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: tier === 'high' });
     renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, tier === 'medium' ? 1.5 : (isMobile ? 1.5 : 2)));
+    // [OPTIMIZATION] Clamp DPR to max 1.5 to save massive rendering calculations on 4K laptops
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.0 : 1.5));
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+    // [OPTIMIZATION] Increase ambient light slightly to compensate for removed inner planet point lights
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
     
     const sunLight = new THREE.PointLight(0xC9A96E, 3, 120);
     scene.add(sunLight);
 
     // ── Sun ──────────────────────────────────────────
     const sunGeo = new THREE.SphereGeometry(5, isMobile ? 16 : 32, isMobile ? 16 : 32);
-    const sunMat = new THREE.MeshStandardMaterial({
-      color: 0xC9A96E, emissive: 0xC9A96E, emissiveIntensity: 1.2, roughness: 0.3, metalness: 0.6,
+    // [OPTIMIZATION] MeshLambertMaterial is vastly cheaper than Standard
+    const sunMat = new THREE.MeshLambertMaterial({
+      color: 0xC9A96E, emissive: 0xC9A96E, emissiveIntensity: 1.2
     });
     const sun = new THREE.Mesh(sunGeo, sunMat);
     scene.add(sun);
@@ -103,6 +109,9 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
     // ── Planets ──────────────────────────────────────
     const planetMeshes = [];
     const angles = PLANETS.map(() => Math.random() * Math.PI * 2);
+    
+    // [OPTIMIZATION] Shared sphere geometry for all planets
+    const planetGeo = new THREE.SphereGeometry(1, isMobile ? 12 : 24, isMobile ? 12 : 24);
 
     PLANETS.forEach((p, i) => {
       // Orbit Ring
@@ -113,20 +122,16 @@ export default function SolarSystem({ focusedIdx, isFocused, onManualSelect }) {
       scene.add(ring);
 
       // Planet Sphere
-      const geo = new THREE.SphereGeometry(p.size, isMobile ? 12 : 24, isMobile ? 12 : 24);
-      const mat = new THREE.MeshStandardMaterial({
+      // [OPTIMIZATION] Use MeshLambertMaterial instead of Standard, and remove individual PointLight
+      const mat = new THREE.MeshLambertMaterial({
         color: new THREE.Color(p.color),
         emissive: new THREE.Color(p.color),
-        emissiveIntensity: 0.7,
-        roughness: 0.3,
-        metalness: 0.4,
+        emissiveIntensity: 0.35, // Rely on ambient and sun light
       });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.userData = { planet: p, orbitR: p.orbitR, speed: p.speed, idx: i };
       
-      // Add PointLight at planet position
-      const planetLight = new THREE.PointLight(new THREE.Color(p.color), 0.8, 4);
-      mesh.add(planetLight);
+      const mesh = new THREE.Mesh(planetGeo, mat);
+      mesh.scale.setScalar(p.size);
+      mesh.userData = { planet: p, orbitR: p.orbitR, speed: p.speed, idx: i };
       
       scene.add(mesh);
       planetMeshes.push(mesh);

@@ -43,31 +43,16 @@ export default function Skills() {
   const [focusedIdx, setFocusedIdx] = useState(0);
   const [isFocused, setIsFocused] = useState(false); // start false
 
-  // Auto-rotation system
+  // Reset when scrolled out of view, default to Frontend when in view
   useEffect(() => {
-    let timer1, timer2;
-    
     if (isInView) {
-      if (isFocused) {
-        // Keep focused for 2.5s
-        timer1 = setTimeout(() => {
-          setIsFocused(false);
-        }, 2500);
-      } else {
-        // 0.3s gap for crossfade before next planet activates
-        timer2 = setTimeout(() => {
-          setFocusedIdx(prev => (prev + 1) % SKILL_CATEGORIES.length);
-          setIsFocused(true);
-        }, 300);
-      }
+      setIsFocused(true);
+      setFocusedIdx(0);
     } else {
-      // Reset when scrolled out of view
       setIsFocused(false);
-      setFocusedIdx(0); // Optional: restarts from Frontend when they scroll back
+      setFocusedIdx(0);
     }
-    
-    return () => { clearTimeout(timer1); clearTimeout(timer2); };
-  }, [isFocused, focusedIdx, isInView]);
+  }, [isInView]);
 
   const handleManualSelect = (idx) => {
     setFocusedIdx(idx);
@@ -116,7 +101,7 @@ export default function Skills() {
                 marginTop: '0.75rem',
                 fontStyle: 'italic',
               }}>
-                Watch the system rotate or click a category to explore
+                Click a category below to explore my skills
               </p>
             </div>
           </div>

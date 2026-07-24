@@ -38,14 +38,7 @@ export default function WormholePortal() {
     const knot = new THREE.Mesh(geo, mat);
     scene.add(knot);
 
-    // Inner glow
-    if (!isMob) {
-      const innerGeo = new THREE.TorusKnotGeometry(3.6, 0.7, 100, 16, 2, 3);
-      const innerMat = new THREE.MeshBasicMaterial({
-        color: 0xE85D26, transparent: true, opacity: 0.15, wireframe: true,
-      });
-      scene.add(new THREE.Mesh(innerGeo, innerMat));
-    }
+
 
     // Ambient + point
     scene.add(new THREE.AmbientLight(0xffffff, 0.5));
@@ -89,6 +82,7 @@ export default function WormholePortal() {
       const t = clock.getElapsedTime();
       knot.rotation.x = t * 0.22;
       knot.rotation.y = t * 0.14;
+
       ptLight.intensity = 3 + Math.sin(t * 2) * 0.8;
       renderer.render(scene, camera);
     };

@@ -46,15 +46,15 @@ export default function Education() {
         if (!card) return;
         gsap.fromTo(
           card,
-          { opacity: 0, x: i % 2 === 0 ? -60 : 60, scale: 0.95 },
+          { opacity: 0, y: 40 },
           {
-            opacity: 1, x: 0, scale: 1,
+            opacity: 1, y: 0,
             duration: 0.8,
             ease: 'power3.out',
             force3D: true,
             scrollTrigger: {
               trigger: card,
-              start: 'top 82%',
+              start: 'top 85%',
               once: true,
             }
           }
@@ -207,7 +207,6 @@ export default function Education() {
 
 function EduCard({ item }) {
   return (
-    <BorderGlow glowIntensity={3} glowColor="#C9A96E" glowSize={150} backgroundColor="#FAF7F2">
       <div
         className="edu-card"
         style={{
@@ -215,8 +214,8 @@ function EduCard({ item }) {
           padding: '1.5rem 1.75rem',
           borderRadius: '16px',
           textAlign: 'left',
-          boxShadow: 'none',
-          border: 'none',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
+          border: '1px solid rgba(201, 169, 110, 0.2)',
         }}
       >
         <h3 style={{
@@ -252,7 +251,6 @@ function EduCard({ item }) {
           {item.detail}
         </p>
       </div>
-    </BorderGlow>
   );
 }
 

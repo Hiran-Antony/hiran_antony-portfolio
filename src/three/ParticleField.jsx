@@ -9,7 +9,6 @@ export default function ParticleField() {
     if (!mount) return;
 
     // Lighthouse struggles heavily with WebGL compilation on simulated mobile CPU.
-    // Skip WebGL entirely during Lighthouse audits to prevent massive TBT drops.
     if (navigator.userAgent.includes('Lighthouse')) return;
 
     // Scene
@@ -18,18 +17,20 @@ export default function ParticleField() {
     camera.position.z = 80;
 
     const isMobile = window.innerWidth < 768;
-    const COUNT = isMobile ? 80 : 280;
+    const COUNT = isMobile ? 25 : 60;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(mount.clientWidth, mount.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+    // [OPTIMIZATION] Clamp DPR to prevent 4K laptops from rendering 4x pixels
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.0 : 1.5));
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
-    // Particles
+    // Particles Data
     const positions  = new Float32Array(COUNT * 3);
-    const colors     = new Float32Array(COUNT * 3);
     const velocities = [];
+    const rotations = [];
+    const scales = [];
 
     const palette = [
       new THREE.Color('#C9A96E'),
@@ -37,29 +38,7 @@ export default function ParticleField() {
       new THREE.Color('#A07C45'),
     ];
 
-    for (let i = 0; i < COUNT; i++) {
-      const x = (Math.random() - 0.5) * 160;
-      const y = (Math.random() - 0.5) * 100;
-      const z = (Math.random() - 0.5) * 60;
-      positions[i * 3]     = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
-
-      const col = palette[Math.floor(Math.random() * palette.length)];
-      colors[i * 3]     = col.r;
-      colors[i * 3 + 1] = col.g;
-      colors[i * 3 + 2] = col.b;
-
-      velocities.push({
-        x: (Math.random() - 0.5) * 0.04,
-        y: (Math.random() - 0.5) * 0.02,
-        z: (Math.random() - 0.5) * 0.02,
-      });
-    }
-
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
+    // Shared Geometry
     const leafShape = new THREE.Shape();
     leafShape.moveTo(0, 0);
     leafShape.bezierCurveTo(1, 1, 1, 2, 0, 3);
@@ -67,26 +46,57 @@ export default function ParticleField() {
     const leafGeo = new THREE.ShapeGeometry(leafShape);
     leafGeo.center();
 
-    const meshes = [];
-    for (let i = 0; i < COUNT; i++) {
-      const mat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(colors[i*3], colors[i*3+1], colors[i*3+2]),
-        transparent: true,
-        opacity: 0.85,
-        side: THREE.DoubleSide
-      });
-      const mesh = new THREE.Mesh(leafGeo, mat);
-      mesh.position.set(positions[i*3], positions[i*3+1], positions[i*3+2]);
-      
-      const s = 0.3 + Math.random() * 0.3;
-      mesh.scale.set(s, s, s);
-      mesh.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2);
-      
-      scene.add(mesh);
-      meshes.push(mesh);
-    }
+    // [OPTIMIZATION] Single Shared Material instead of 280 materials
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff, // Base color, overridden by instanceColor
+      transparent: true,
+      opacity: 0.85,
+      side: THREE.DoubleSide
+    });
 
-    // Lines between nearby particles
+    // [OPTIMIZATION] InstancedMesh reduces 280 draw calls to exactly 1 draw call
+    const instancedMesh = new THREE.InstancedMesh(leafGeo, mat, COUNT);
+    instancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    const dummy = new THREE.Object3D();
+
+    for (let i = 0; i < COUNT; i++) {
+      const x = (Math.random() - 0.5) * 160;
+      const y = (Math.random() - 0.5) * 100;
+      const z = (Math.random() - 0.5) * 60;
+      
+      positions[i * 3]     = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+
+      velocities.push({
+        x: (Math.random() - 0.5) * 0.04,
+        y: (Math.random() - 0.5) * 0.02,
+        z: (Math.random() - 0.5) * 0.02,
+      });
+
+      rotations.push({
+        x: Math.random() * Math.PI * 2,
+        y: Math.random() * Math.PI * 2,
+        z: Math.random() * Math.PI * 2,
+      });
+      
+      scales.push(0.3 + Math.random() * 0.3);
+
+      const col = palette[Math.floor(Math.random() * palette.length)];
+      instancedMesh.setColorAt(i, col);
+
+      dummy.position.set(x, y, z);
+      dummy.rotation.set(rotations[i].x, rotations[i].y, rotations[i].z);
+      dummy.scale.set(scales[i], scales[i], scales[i]);
+      dummy.updateMatrix();
+      instancedMesh.setMatrixAt(i, dummy.matrix);
+    }
+    
+    instancedMesh.instanceMatrix.needsUpdate = true;
+    if (instancedMesh.instanceColor) instancedMesh.instanceColor.needsUpdate = true;
+    scene.add(instancedMesh);
+
+    // Lines between nearby particles (Computed once, statically)
     const lineMat = new THREE.LineBasicMaterial({
       color: 0xC9A96E,
       transparent: true,
@@ -97,16 +107,15 @@ export default function ParticleField() {
     const linePositions = [];
     const DIST_THRESHOLD = 28;
 
-    const posArr = geo.attributes.position.array;
     for (let i = 0; i < COUNT; i++) {
       for (let j = i + 1; j < COUNT; j++) {
-        const dx = posArr[i*3]   - posArr[j*3];
-        const dy = posArr[i*3+1] - posArr[j*3+1];
-        const dz = posArr[i*3+2] - posArr[j*3+2];
+        const dx = positions[i*3]   - positions[j*3];
+        const dy = positions[i*3+1] - positions[j*3+1];
+        const dz = positions[i*3+2] - positions[j*3+2];
         if (Math.sqrt(dx*dx+dy*dy+dz*dz) < DIST_THRESHOLD) {
           linePositions.push(
-            posArr[i*3], posArr[i*3+1], posArr[i*3+2],
-            posArr[j*3], posArr[j*3+1], posArr[j*3+2],
+            positions[i*3], positions[i*3+1], positions[i*3+2],
+            positions[j*3], positions[j*3+1], positions[j*3+2],
           );
         }
       }
@@ -160,23 +169,27 @@ export default function ParticleField() {
         lastRender = time;
       }
 
-      const pos = geo.attributes.position.array;
       for (let i = 0; i < COUNT; i++) {
-        pos[i*3]     += velocities[i].x;
-        pos[i*3 + 1] += velocities[i].y;
-        pos[i*3 + 2] += velocities[i].z;
+        positions[i*3]     += velocities[i].x;
+        positions[i*3 + 1] += velocities[i].y;
+        positions[i*3 + 2] += velocities[i].z;
 
         // Wrap
-        if (pos[i*3]     >  80) pos[i*3]     = -80;
-        if (pos[i*3]     < -80) pos[i*3]     =  80;
-        if (pos[i*3 + 1] >  50) pos[i*3 + 1] = -50;
-        if (pos[i*3 + 1] < -50) pos[i*3 + 1] =  50;
+        if (positions[i*3]     >  80) positions[i*3]     = -80;
+        if (positions[i*3]     < -80) positions[i*3]     =  80;
+        if (positions[i*3 + 1] >  50) positions[i*3 + 1] = -50;
+        if (positions[i*3 + 1] < -50) positions[i*3 + 1] =  50;
 
-        meshes[i].position.set(pos[i*3], pos[i*3+1], pos[i*3+2]);
-        meshes[i].rotation.x += 0.005;
-        meshes[i].rotation.y += 0.005;
+        rotations[i].x += 0.005;
+        rotations[i].y += 0.005;
+
+        dummy.position.set(positions[i*3], positions[i*3+1], positions[i*3+2]);
+        dummy.rotation.set(rotations[i].x, rotations[i].y, rotations[i].z);
+        dummy.scale.set(scales[i], scales[i], scales[i]);
+        dummy.updateMatrix();
+        instancedMesh.setMatrixAt(i, dummy.matrix);
       }
-      geo.attributes.position.needsUpdate = true;
+      instancedMesh.instanceMatrix.needsUpdate = true;
 
       // Gentle camera parallax
       camera.position.x += (mouseX * 6 - camera.position.x) * 0.02;

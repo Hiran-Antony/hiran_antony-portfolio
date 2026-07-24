@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 // ── Scroll Trigger for Confetti ──────────────────────────────
 function ConfettiBurst() {
   const colors = ['#C9A96E','#E85D26','#E8D5B0','#3D2B1F','#A07C45','#FAF7F2'];
-  const pieces = Array.from({ length: 80 }, (_, i) => ({
+  const pieces = Array.from({ length: 35 }, (_, i) => ({
     id: i,
     color: colors[i % colors.length],
     left: `${Math.random() * 100}%`,

@@ -3,19 +3,20 @@ import { gsap } from 'gsap';
 import { useInView } from 'framer-motion';
 const ParticleField = lazy(() => import('../three/ParticleField'));
 import { Mail, ArrowDown, Eye } from 'lucide-react';
-import avatarImg from '../assets/avatar.webp';
+import avatarImg from '../assets/image.webp';
 import { usePerformanceTier } from '../context/PerformanceContext';
+import BlurText from './ui/BlurText';
 
 const ROLES = ['Full Stack Developer', 'Web Designer', 'Creative Technologist'];
 const NAME   = 'Hiran Antony R';
 
 export default function Hero({ introComplete }) {
-  const lettersRef   = useRef([]);
   const roleRef      = useRef(null);
   const bioRef       = useRef(null);
   const ctaRef       = useRef(null);
   const arrowRef     = useRef(null);
   const [roleIdx, setRoleIdx] = useState(0);
+  const [show3D, setShow3D] = useState(false);
   const tier = usePerformanceTier();
 
   const sectionRef = useRef(null);
@@ -27,26 +28,11 @@ export default function Hero({ introComplete }) {
     
     // Defer animation very slightly to ensure browser has painted the initial frame
     setTimeout(() => {
-      const letters = lettersRef.current.filter(Boolean);
-      
-      // Restored original 3D bounce, but highly optimized and instant
-      gsap.fromTo(
-        letters,
-        { opacity: 0, y: -60, rotateX: -90 },
-        {
-          opacity: 1, y: 0, rotateX: 0,
-          duration: 0.9,
-          stagger: 0.06, // slightly faster stagger
-          ease: 'back.out(1.5)',
-          force3D: true, // hardware acceleration
-        }
-      );
-
       // Bio + CTA fade-in
       gsap.fromTo(
         [bioRef.current, ctaRef.current],
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.6, stagger: 0.2, force3D: true }
+        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.9, stagger: 0.2, force3D: true }
       );
     }, 50);
 
@@ -54,6 +40,13 @@ export default function Hero({ introComplete }) {
     gsap.to(arrowRef.current, {
       y: 12, repeat: -1, yoyo: true, duration: 0.9, ease: 'sine.inOut',
     });
+
+    // Mount heavy 3D background AFTER text animations complete
+    const bgTimer = setTimeout(() => {
+      setShow3D(true);
+    }, 1500);
+
+    return () => clearTimeout(bgTimer);
   }, [introComplete]);
 
   // Role switcher
@@ -91,7 +84,7 @@ export default function Hero({ introComplete }) {
       }}
     >
       {/* 3D Background */}
-      {isInView && introComplete && tier !== 'low' && (
+      {isInView && show3D && tier !== 'low' && (
         <Suspense fallback={<div style={{position: 'absolute', inset: 0, zIndex: 0, background: 'transparent'}} />}>
           <ParticleField />
         </Suspense>
@@ -126,21 +119,15 @@ export default function Hero({ introComplete }) {
         </p>
 
         {/* Name */}
-        <h1 className="hero-name">
-          {NAME.split('').map((char, i) => (
-            <span
-              key={i}
-              ref={char === ' ' ? null : el => lettersRef.current[i] = el}
-              style={{
-                display: 'inline-block',
-                opacity: char === ' ' ? 1 : 0,
-                color: char === 'H' || char === 'A' ? 'var(--gold)' : 'var(--espresso)',
-              }}
-            >
-              {char === ' ' ? '\u00A0' : char}
-            </span>
-          ))}
-        </h1>
+        <BlurText
+          text={NAME}
+          delay={35}
+          stepDuration={0.3}
+          animateBy="letters"
+          direction="top"
+          className="hero-name blur-name"
+          as="h1"
+        />
 
         {/* Role switcher */}
         <div style={{
@@ -251,6 +238,10 @@ export default function Hero({ introComplete }) {
           line-height: 1.1;
           width: 100%;
           max-width: 100%;
+        }
+        .blur-name span:nth-child(1),
+        .blur-name span:nth-child(7) {
+          color: var(--gold) !important;
         }
         @media (max-width: 1279px) {
           .hero-name {
