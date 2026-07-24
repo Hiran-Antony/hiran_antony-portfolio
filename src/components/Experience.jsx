@@ -21,17 +21,16 @@ export default function Experience() {
 
       tl.from(".exp-panels", {
         opacity: 0,
-        y: 40,
-        duration: 0.6,
-        ease: "power3.out"
+        duration: 0.4,
+        ease: "power2.out"
       })
       .from(".exp-panel", {
         opacity: 0,
-        x: (i) => i === 0 ? -30 : 30,
+        y: 30,
         duration: 0.6,
         stagger: 0.15,
         ease: "power3.out"
-      }, "-=0.4"); // Overlap to make it snappy and seamless
+      }, "-=0.2"); // Smooth, simple lift-up animation without nested transforms
 
     }, sectionRef);
 
